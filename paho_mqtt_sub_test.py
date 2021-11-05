@@ -14,6 +14,6 @@ client.on_message = on_message
 
 # client.connect("localhost", 1883, 60)
 # client.connect("test.mosquitto.org", 1883, 60)
-mqtt.connect("mqtt.eclipseprojects.io", 1883)
+client.connect("mqtt.eclipseprojects.io", 1883)
 
 client.loop_forever()
