@@ -2,8 +2,9 @@ import paho.mqtt.client as mqtt
 
 mqtt = mqtt.Client("pub")
 
-#mqtt.connect("localhost", 1883)
-mqtt.connect("test.mosquitto.org", 1883)
+# mqtt.connect("localhost", 1883)
+# mqtt.connect("test.mosquitto.org", 1883)
+mqtt.connect("mqtt.eclipseprojects.io", 1883)
 
 try:
 
