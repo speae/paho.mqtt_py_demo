@@ -55,9 +55,6 @@ def on_message(client, userdata, msg):
 def on_publish(client, obj, mid):
     print("mid : " + str(mid))
 
-def on_subscribe(client, obj, mid, granted_qos):
-    print("Subscribed : " + str(mid) + " " + str(granted_qos))
-
 if __name__ == '__main__':
 
     try:
@@ -66,8 +63,7 @@ if __name__ == '__main__':
         client.on_message = on_message
         client.on_connect = on_connect
         client.on_publish = on_publish
-        client.on_subscribe = on_subscribe
-        
+         
         client.connect("mqtt.eclipseprojects.io", 1883, 60)
         # client.connect("test.mosquitto.org", 1883, 60)
 

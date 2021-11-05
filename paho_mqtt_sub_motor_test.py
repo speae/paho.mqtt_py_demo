@@ -116,9 +116,6 @@ def on_message(server, userdata, msg):
     motorCon = Motor_Con()
     motorCon.cmd_function(arg_chk)
 
-def on_publish(server, obj, mid):
-    print("mid : " + str(mid))
-
 def on_subscribe(server, obj, mid, granted_qos):
     print("Subscribed : " + str(mid) + " " + str(granted_qos))
 
@@ -129,7 +126,6 @@ if __name__ == '__main__':
         server.on_log = on_log
         server.on_message = on_message
         server.on_connect = on_connect
-        server.on_publish = on_publish
         server.on_subscribe = on_subscribe
         
         server.connect("mqtt.eclipseprojects.io", 1883, 60)
