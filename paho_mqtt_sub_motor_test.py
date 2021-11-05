@@ -42,7 +42,7 @@ class Motor_Con:
 
     # openport
     def openSerial(self):
-        print("1")
+        #print("1")
         
         self.serialPort = serial.Serial(
             port="/dev/ttyTHS2",
@@ -55,7 +55,7 @@ class Motor_Con:
         return self.serialPort
     
     def txThread(self, arg):
-        print("2")
+        #print("2")
         
         self.data = arg
         
@@ -71,7 +71,7 @@ class Motor_Con:
             self.exitThread = True
     
     def rxThread(self):
-        print("3")
+        #print("3")
         
         self.serialPort.read()
         self.data = self.serialPort.readline()
