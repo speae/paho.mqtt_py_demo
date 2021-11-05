@@ -5,6 +5,7 @@ import time
 import serial
 import signal 
 
+from multiprocessing import Pool, Process, Value, Array, TimeoutError
 import paho.mqtt.client as mqtt
 
 # MQTT Value
@@ -113,8 +114,17 @@ def on_message(server, userdata, msg):
         print("quit cammand.")
         server.disconnect()
         sys.exit()
-    motorCon = Motor_Con()
-    motorCon.cmd_function(arg_chk)
+    
+    with Pool(processes=2) as pool:
+        motorCon = Motor_Con()
+    
+        res = pool.apply_async(motorCon.cmd_function, (arg_chk,))
+        try:
+            print(res.get())
+            pool.close()
+            pool.join()
+        except TimeoutError:
+            print("We lacked patience and got a multiprocessing -> TimeoutError.")
 
 def on_subscribe(server, obj, mid, granted_qos):
     print("Subscribed : " + str(mid) + " " + str(granted_qos))
