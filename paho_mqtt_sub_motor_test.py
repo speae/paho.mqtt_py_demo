@@ -1,5 +1,6 @@
 import sys
 import os
+import concurrent.futures
 import threading
 import time
 import serial
@@ -9,7 +10,7 @@ from multiprocessing import Pool, Process, Value, Array, TimeoutError
 import paho.mqtt.client as mqtt
 
 # MQTT Value
-
+TPE = concurrent.futures.ThreadPoolExecutor(max_workers=6)
 
 # Motor Control Function
 class Motor_Con:
@@ -28,18 +29,18 @@ class Motor_Con:
                         'i' : 'stop'}
         self.serialPort = serial.Serial()
         
-    # def create_fifo(self):
+    def create_fifo(self):
         
-    #     try:
-    #         os.remove(self.fifoFileName)
-    #     except FileNotFoundError:
-    #         print("FIFO file is not found.")
-    #         pass
-    #     try:
-    #         os.mkfifo(self.fifoFileName, self.fifoMode)
-    #     except FileExistsError:
-    #         print("FIFO file is exist.")    
-    #         pass
+        try:
+            os.remove(self.fifoFileName)
+        except FileNotFoundError:
+            print("FIFO file is not found.")
+            pass
+        try:
+            os.mkfifo(self.fifoFileName, self.fifoMode)
+        except FileExistsError:
+            print("FIFO file is exist.")    
+            pass
 
     # openport
     def openSerial(self):
@@ -60,9 +61,14 @@ class Motor_Con:
         
         self.data = arg
         
-        if self.keyMap[self.data]:    
-            self.serialPort.write(self.data.encode("utf-8"))
-            print("input data : ", self.data)
+        if self.keyMap[self.data]:  
+            
+            with open(self.fifoFileName , 'w') as fw:
+                fw.writelines(self.data + "\n")
+                print("input data : ", self.data)
+
+            # self.serialPort.write(self.data.encode("utf-8"))
+            # print("input data : ", self.data)
         
             # with open(self.fifoFileName, "wb") as fifo:
             #     fifoData = fifo.write(self.data)
@@ -70,33 +76,28 @@ class Motor_Con:
 
         else:
             self.exitThread = True
-    
+        
     def rxThread(self):
         #print("3")
         
-        self.serialPort.read()
-        self.data = self.serialPort.readline()
-        print("output data : " + self.data.decode("utf-8"))
+        with open(self.fifoFileName , 'r') as fr:
+            self.data = fr.read()
+            print("output data : " + self.data)
         
-        # with open(self.fifoFileName) as fifo:
-        #     data = fifo.read()
-        #     open(self.fifoFileName, 'r')
-        #     print("output data : ", data)
+        # self.serialPort.read()
+        # self.data = self.serialPort.readline()
+        # print("output data : " + self.data)
            
     def cmd_function(self, arg):
-        
-        #self.create_fifo()
+    
+        self.create_fifo()
         self.openSerial()
         
-        tx = threading.Thread(target=self.txThread, args=(arg,))
-        rx = threading.Thread(target=self.rxThread)
+        TPE.submit(self.txThread, arg)
+        TPE.submit(self.rxThread)
         
-        tx.start()
-        rx.start()
-
-        tx.join()
-        rx.join()
-
+        TPE.shutdown()
+        
 # MQTT Function
 def on_log(server, obj, level, string):
     print(string)
@@ -118,9 +119,8 @@ def on_message(server, userdata, msg):
     with Pool(processes=2) as pool:
         motorCon = Motor_Con()
     
-        res = pool.apply_async(motorCon.cmd_function, (arg_chk,))
+        pool.apply_async(motorCon.cmd_function, (arg_chk,))
         try:
-            print(res.get())
             pool.close()
             pool.join()
         except TimeoutError:
