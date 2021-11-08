@@ -6,6 +6,7 @@ import signal
 
 from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
 
+from rplidar import RPLidar
 import paho.mqtt.client as mqtt
 
 # MQTT Value
