@@ -1,16 +1,15 @@
 import sys
 import os
-import concurrent.futures
-import threading
-import time
 import serial
+import time
 import signal 
 
 from multiprocessing import Pool, Process, Value, Array, TimeoutError
+from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor, process
 import paho.mqtt.client as mqtt
 
 # MQTT Value
-TPE = concurrent.futures.ThreadPoolExecutor(max_workers=6)
+TPE = ThreadPoolExecutor(max_workers=6)
 
 # Motor Control Function
 class Motor_Con:
@@ -116,15 +115,15 @@ def on_message(server, userdata, msg):
         server.disconnect()
         sys.exit()
     
-    with Pool(processes=2) as pool:
+    with ProcessPoolExecutor(max_workers=4) as PPE:
         motorCon = Motor_Con()
     
-        pool.apply_async(motorCon.cmd_function, (arg_chk,))
+        PPE.map(motorCon.cmd_function, arg_chk)
+        
         try:
-            pool.close()
-            pool.join()
-        except TimeoutError:
-            print("We lacked patience and got a multiprocessing -> TimeoutError.")
+            PPE.shutdown(wait=True)
+        except RuntimeError:
+            print("process is alerady shutdowned -> Runtimeout.")
 
 def on_subscribe(server, obj, mid, granted_qos):
     print("Subscribed : " + str(mid) + " " + str(granted_qos))
