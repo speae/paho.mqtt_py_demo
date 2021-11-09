@@ -139,7 +139,7 @@ if __name__ == '__main__':
         server.on_subscribe = on_subscribe
         
         server.connect("mqtt.eclipseprojects.io", 1883, 60)
-        # server.connect("test.mosquitto.org", 1883, 60)
+        #server.connect("test.mosquitto.org", 1883, 60)
         
         server.loop_forever()
 

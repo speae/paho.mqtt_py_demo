@@ -105,7 +105,7 @@ if __name__ == '__main__':
     client.on_publish = on_publish
         
     client.connect("mqtt.eclipseprojects.io", 1883, 60)
-    # client.connect("test.mosquitto.org", 1883, 60)
+    #client.connect("test.mosquitto.org", 1883, 60)
 
     if config["sensor"] == 'l':
 
