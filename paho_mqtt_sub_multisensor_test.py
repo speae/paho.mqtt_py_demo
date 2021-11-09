@@ -65,10 +65,10 @@ class MotorCon:
             
             with open(self.fifoFileName , 'w') as fw:
                 fw.writelines(self.data + "\n")
-                print("input data : ", self.data)
+                print("input FIFO data : ", self.data)
 
-            # self.serialPort.write(self.data.encode("utf-8"))
-            # print("input data : ", self.data)
+                self.serialPort.write(self.data.encode("utf-8"))
+                print("input serial data : ", self.data)
         
             # with open(self.fifoFileName, "wb") as fifo:
             #     fifoData = fifo.write(self.data)
@@ -82,11 +82,11 @@ class MotorCon:
         
         with open(self.fifoFileName , 'r') as fr:
             self.data = fr.read()
-            print("output data : " + self.data)
+            print("output FIFO data : " + self.data)
         
-        # self.serialPort.read()
-        # self.data = self.serialPort.readline()
-        # print("output data : " + self.data)
+        self.serialPort.read()
+        self.data = self.serialPort.readline()
+        print("output serial data : " + self.data)
            
     def cmd_function(self, arg):
     

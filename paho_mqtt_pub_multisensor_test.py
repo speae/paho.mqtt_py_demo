@@ -21,7 +21,7 @@ class Lidar_Con:
 
     def __init__(self):
         self.lidar = RPLidar('/dev/ttyUSB0')
-
+        
     def lidarInfo(self):
         info = self.lidar.get_info()
         print(info)
@@ -29,21 +29,23 @@ class Lidar_Con:
         health = self.lidar.get_health()
         print(health)
 
-    def scanData(self, data):
-        for scan in zip(data):
-            for quality, angle, distance in scan:
-                print("quality : %d, angle : %f, distance : %f" % (quality, angle, distance))
-            
     def lidarScan(self):
         for i, scan in enumerate(self.lidar.iter_scans()):
-            self.scanData(scan)
             print('%d: Got %d measurments' % (i, len(scan)))
+            return scan
 
+    def scanData(self, quality, angle, distance):
+        if quality == 0 or distance == 0.0:
+            return 'i'
+        elif quality > 0 and distance < 1000.0:
+            return 'd'
+        elif quality > 0 and distance > 1000.0:
+            return 'c'
+                
     def lidarOFF(self):
         self.lidar.stop()
         self.lidar.stop_motor()
         self.lidar.disconnect()
-
 
 # Motor Control Function
 class MotorCon:
@@ -110,14 +112,36 @@ if __name__ == '__main__':
         try:
     
             RP = Lidar_Con()
-            RP.lidarInfo()
+            # RP.lidarInfo()
+            lidar = RPLidar('/dev/ttyUSB0')
 
             client.loop_start()
-            RP.lidarScan()
+            for i, scan in enumerate(lidar.iter_scans()):
+                print('%d: Got %d measurments' % (i, len(scan)))
+                for data in zip(scan):
+                    for quality, angle, distance in data:
+                        print("quality : %d, angle : %f, distance : %f" % (quality, angle, distance))
+                        result = RP.scanData(quality, angle, distance)
+
+                        pub_chk = client.publish("mqtt/paho", result)
+                        print("command : ", result)
+                        pub_chk.wait_for_publish()
+
+            # scanProcess = RP.lidarScan()
             
+            # for order, scanResult in enumerate(scanProcess):
+            #     command = RP.scanData(scanResult)
+                
+            #     pub_chk = client.publish("mqtt/paho", command)
+            #     print("command : ", command)
+            #     pub_chk.wait_for_publish()
+
         except KeyboardInterrupt:
             RP.lidarOFF()
-            client.disconnect()
+            # lidar.stop()
+            # lidar.stop_motor()
+            # lidar.disconnect()
+            # client.disconnect()
             sys.exit()
 
     elif config["sensor"] == 'k':
