@@ -37,9 +37,9 @@ class Lidar_Con:
     def scanData(self, quality, angle, distance):
         if quality == 0 or distance == 0.0:
             return 'i'
-        elif quality > 0 and distance < 1000.0:
+        elif quality > 0 and distance <= 500.0:
             return 'd'
-        elif quality > 0 and distance > 1000.0:
+        elif quality > 0 and distance > 500.0:
             return 'c'
                 
     def lidarOFF(self):

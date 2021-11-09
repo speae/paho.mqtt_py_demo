@@ -84,9 +84,9 @@ class MotorCon:
             self.data = fr.read()
             print("output FIFO data : " + self.data)
         
-        self.serialPort.read()
-        self.data = self.serialPort.readline()
-        print("output serial data : " + self.data)
+            # self.serialPort.read()
+            # self.data = self.serialPort.readline()
+            # print("output serial data : " + self.data)
            
     def cmd_function(self, arg):
     
