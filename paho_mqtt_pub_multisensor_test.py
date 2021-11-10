@@ -107,6 +107,7 @@ if __name__ == '__main__':
     client.connect("mqtt.eclipseprojects.io", 1883, 60)
     #client.connect("test.mosquitto.org", 1883, 60)
 
+    # automatic control mode
     if config["sensor"] == 'l':
 
         try:
@@ -144,6 +145,7 @@ if __name__ == '__main__':
             # client.disconnect()
             sys.exit()
 
+    # manual control mode
     elif config["sensor"] == 'k':
 
         try:
