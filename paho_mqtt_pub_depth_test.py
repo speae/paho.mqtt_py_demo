@@ -34,6 +34,8 @@ obs_val = 0 # 가까운 장애물의 거리
 following_pers = 0 # 추적타겟
 center_p = 0 # 중앙에 가장 가까운 객체의 id
 
+print_fps = ''
+
 # 파이프라인fifo 쓰레드함수
 def fifoThread ():
     global stopThread_flag # 쓰레드 종료flag
@@ -85,7 +87,7 @@ def fifoThread ():
                 #     buff_a = 'd'
                 # 타겟과의 거리가 적당거리일떄 멈춤
                 else:
-                    buff_a = 'i'
+                    buff_a = 'j'
 	
             print(buff_a)
             # 파일에 fifo로 쓰기 문자열은 .encode()해서 보내야함
@@ -93,12 +95,12 @@ def fifoThread ():
             time.sleep(1)
         # 장애물이 있으면 obs_val == 1
         else:
-            buff_a = 'i'
+            buff_a = 'j'
             os.write(fd_from_yolo, buff_a.encode())
             print(buff_a, " : WARNING. Obstacle come closing ")
 
         if stopThread_flag == True: # 종료문
-            buff_a = 'i'
+            buff_a = 'j'
             os.write(fd_from_yolo, buff_a.encode())
             break
 
