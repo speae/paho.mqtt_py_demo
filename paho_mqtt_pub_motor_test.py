@@ -11,7 +11,7 @@ import paho.mqtt.client as mqtt
 
 
 # Motor Control Function
-class Motor_Con:
+class MotorCon:
 
     def mainMenu(self):
         
@@ -67,7 +67,7 @@ if __name__ == '__main__':
         client.connect("mqtt.eclipseprojects.io", 1883, 60)
         # client.connect("test.mosquitto.org", 1883, 60)
 
-        motorCon = Motor_Con()
+        motorCon = MotorCon()
         
         client.loop_start()
         while True:
