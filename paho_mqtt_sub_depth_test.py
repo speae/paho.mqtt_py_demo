@@ -566,9 +566,9 @@ if __name__ == '__main__':
     fifo_start = time.time()
     
     args.img_size = check_img_size(args.img_size)
-    if args.option == "deepsort":
-        with torch.no_grad():
-            detect(args)
+    #if args.option == "deepsort":
+    with torch.no_grad():
+        detect(args)
             
 
     
