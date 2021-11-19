@@ -42,6 +42,7 @@ def fifoThread ():
     global target_xval # fifo 사물의x좌표 전달 변수
     global distance_val # fifo 거리데이터 전달 변수
     global obs_val  # 멈추기위한 장애물과의 거리 
+    global fifo_start
 
     print("fifo thread on")
     if not os.path.exists('/tmp/from_yolo_fifo'):
@@ -52,7 +53,8 @@ def fifoThread ():
     fd_from_yolo = os.open("/tmp/from_yolo_fifo", os.O_RDWR)
     fd_to_yolo = os.open("/tmp/to_yolo_fifo", os.O_RDWR)
 
-    
+    fifo_end = time.time()
+    print("time to fifo : ", fifo_end - fifo_start)
 
     while True:
         # 장애물이 없으면.
@@ -135,7 +137,8 @@ def detect(opt):
     global following_pers  # 추적할 person타겟 초기화 
     global center_p # 중앙에 가장 가까운 id
     global obs_val # 멈추기위한 장애물과의 거리 
-
+    detect_start = 0.0
+    
     # initialize deepsort 초기화
     cfg = get_config()
     cfg.merge_from_file(opt.config_deepsort)
@@ -399,10 +402,7 @@ def detect(opt):
                     
 
             else:
-                deepsort.increment_ages()
-
-
-          
+                deepsort.increment_ages()        
 
             # 객체A 검출에 걸리는 시간 (inference + NMS)
             #print('%sDone. (%.3fs)' % (s, t2 - t1))
@@ -424,6 +424,12 @@ def detect(opt):
                     following_pers = center_p
                     inputKey = 0
                     
+            detect_end = time.time()         
+            detect_time = detect_end - detect_start
+            detect_start = detect_end
+            fps = 1/detect_time
+
+            print(f'{fps:.5f} fps')
 
             # 영상 저장 (image with detections)
             if save_vid:
@@ -451,8 +457,10 @@ def detect(opt):
     # 전체 작동시간fps
     print('Done. (%.3fs)' % (time.time() - t0))
 
-
 if __name__ == '__main__':
+    global fifo_start
+    fifo_start = time.time()
+
     parser = argparse.ArgumentParser()
     parser.add_argument('--yolo_weights', nargs='+', type=str, default='yolov5/weights/yolov5s.pt', help='model.pt path(s)')
     parser.add_argument('--deep_sort_weights', type=str, default='deep_sort_pytorch/deep_sort/deep/checkpoint/ckpt.t7', help='ckpt.t7 path')
