@@ -30,7 +30,7 @@ def connect_mqtt() -> mqtt_client:
 
 def subscribe(client: mqtt_client):
     
-    def search_deepsort_pid():
+    def kill_deepsort_pid():
 
         for proc in psutil.process_iter():
             try:
@@ -65,7 +65,7 @@ def subscribe(client: mqtt_client):
         
         if str_msg == "deepsort_off":
             print(f"Quit received `{str_msg}` from `{msg.topic}` topic")
-            search_deepsort_pid()
+            kill_deepsort_pid()
             print("deepsort OFF..")
             
             #os.system('python3 exit.py')

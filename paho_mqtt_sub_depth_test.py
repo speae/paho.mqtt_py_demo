@@ -53,141 +53,106 @@ five_unit = 1
 # --> MQTT value
 broker = 'broker.emqx.io'
 port = 1883
-topic = "python/mqtt"
+topic = "python/depth"
 # generate client ID with pub prefix randomly
 client_id = f'python-mqtt-{random.randint(0, 100)}'
 username = 'emqx'
 password = 'public'
 
-defaultArg = "python3 paho_mqtt_sub_depth_test.py --source 2 --yolo_weight yolov5s.pt --show-vid --class 0"
-
-# <-- MQTT value
-
-# MQTT Function
-# def on_log(server, obj, level, string):
-#     print(string)
-
-# def on_connect(server, userdata, flags, rc):
-#     print("connect result " + str(rc))
-
-#     server.subscribe("mqtt/paho")
-
-# def on_message(server, userdata, msg):
-#     print(msg.topic + " " + str(msg.payload))
-#     arg_chk = msg.payload.decode("utf-8")
-#     print("arg : " + arg_chk)
-#     if arg_chk == 'q':
-#         print("quit cammand.")
-#         server.disconnect()
-#         sys.exit()
-    
-#     with ProcessPoolExecutor(max_workers=4) as PPE:
-#         motorCon = MotorCon()
-    
-#         PPE.map(motorCon.cmd_function, arg_chk)
-        
-#         try:
-#             PPE.shutdown(wait=True)
-#         except RuntimeError:
-#             print("process is alerady shutdowned -> Runtimeout.")
-
-# def on_subscribe(server, obj, mid, granted_qos):
-#     print("Subscribed : " + str(mid) + " " + str(granted_qos))
-
 # 파이프라인fifo 쓰레드함수
-def fifoThread ():
-    global stopThread_flag # 쓰레드 종료flag
-    global target_xval # fifo 사물의x좌표 전달 변수
-    global distance_val # fifo 거리데이터 전달 변수
-    global obs_val  # 멈추기위한 장애물과의 거리 
-    global measure_count
-    global five_unit
-    global fifo_start
+# def fifoThread ():
+#     global stopThread_flag # 쓰레드 종료flag
+#     global target_xval # fifo 사물의x좌표 전달 변수
+#     global distance_val # fifo 거리데이터 전달 변수
+#     global obs_val  # 멈추기위한 장애물과의 거리 
+#     global measure_count
+#     global five_unit
+#     global fifo_start
 
-    print("fifo thread on")
-    if not os.path.exists('/tmp/from_yolo_fifo'):
-        os.mkfifo("/tmp/from_yolo_fifo", 0o777)
-    if not os.path.exists('/tmp/to_yolo_fifo'):
-        os.mkfifo("/tmp/to_yolo_fifo", 0o777)
+#     print("fifo thread on")
+#     if not os.path.exists('/tmp/from_yolo_fifo'):
+#         os.mkfifo("/tmp/from_yolo_fifo", 0o777)
+#     if not os.path.exists('/tmp/to_yolo_fifo'):
+#         os.mkfifo("/tmp/to_yolo_fifo", 0o777)
 
-    fd_from_yolo = os.open("/tmp/from_yolo_fifo", os.O_RDWR)
-    fd_to_yolo = os.open("/tmp/to_yolo_fifo", os.O_RDWR)
+#     fd_from_yolo = os.open("/tmp/from_yolo_fifo", os.O_RDWR)
+#     fd_to_yolo = os.open("/tmp/to_yolo_fifo", os.O_RDWR)
 
     
-    fifo_end = time.time()
-    print("time to fifo : ", fifo_end - fifo_start)
+#     fifo_end = time.time()
+#     print("time to fifo : ", fifo_end - fifo_start)
 
-    while True:
+#     while True:
         
-        # 장애물이 없으면.
-        if obs_val == 0:
-            # 타겟의 x좌표의 오른쪽에있고, 오른쪽으로 회전하기 위한값을 fifo로전달
-            if target_xval > 0.9:
-                buff_a = 'A'
-                measure_count += 1
-            elif target_xval > 0.8:
-                buff_a = 'B'
-                measure_count += 1
-            elif target_xval > 0.7:
-                buff_a = 'C'
-                measure_count += 1
-            elif target_xval > 0.6:
-                buff_a = 'D'
-                measure_count += 1
+#         # 장애물이 없으면.
+#         if obs_val == 0:
+#             # 타겟의 x좌표의 오른쪽에있고, 오른쪽으로 회전하기 위한값을 fifo로전달
+#             if target_xval > 0.9:
+#                 buff_a = 'A'
+#                 measure_count += 1
+#             elif target_xval > 0.8:
+#                 buff_a = 'B'
+#                 measure_count += 1
+#             elif target_xval > 0.7:
+#                 buff_a = 'C'
+#                 measure_count += 1
+#             elif target_xval > 0.6:
+#                 buff_a = 'D'
+#                 measure_count += 1
             
-            # 타겟의 x좌표가 왼쪽에있고, 왼쪽으로 회전하기 위한값을 fifo로전달
-            elif target_xval < 0.4:
-                buff_a = 'E'
-                measure_count += 1
+#             # 타겟의 x좌표가 왼쪽에있고, 왼쪽으로 회전하기 위한값을 fifo로전달
+#             elif target_xval < 0.4:
+#                 buff_a = 'E'
+#                 measure_count += 1
             
-            elif target_xval < 0.3:
-                buff_a = 'F'
-                measure_count += 1
+#             elif target_xval < 0.3:
+#                 buff_a = 'F'
+#                 measure_count += 1
             
-            elif target_xval < 0.2:
-                buff_a = 'G'
-                measure_count += 1
+#             elif target_xval < 0.2:
+#                 buff_a = 'G'
+#                 measure_count += 1
             
-            elif target_xval < 0.1:
-                buff_a = 'H'
-                measure_count += 1
+#             elif target_xval < 0.1:
+#                 buff_a = 'H'
+#                 measure_count += 1
             
-            # 타겟의 x좌표가 중앙 0.5에 있을때
-            else:
-                # 타겟과의 거리가 멀리있을때 전진
-                if distance_val > 80.0:
-                    buff_a = 'c'
-                    measure_count += 1
+#             # 타겟의 x좌표가 중앙 0.5에 있을때
+#             else:
+#                 # 타겟과의 거리가 멀리있을때 전진
+#                 if distance_val > 80.0:
+#                     buff_a = 'c'
+#                     measure_count += 1
             
-                # 타겟과의 거리가 가까이있을때 후진
-                # elif distance_val < 0.5:
-                #     buff_a = 'd'
-                # 타겟과의 거리가 적당거리일떄 멈춤
-                else:
-                    buff_a = 'j'
-                    measure_count += 1
+#                 # 타겟과의 거리가 가까이있을때 후진
+#                 # elif distance_val < 0.5:
+#                 #     buff_a = 'd'
+#                 # 타겟과의 거리가 적당거리일떄 멈춤
+#                 else:
+#                     buff_a = 'j'
+#                     measure_count += 1
 	
-            print(buff_a)
-            # 파일에 fifo로 쓰기 문자열은 .encode()해서 보내야함
-            os.write(fd_from_yolo, buff_a.encode())
-            time.sleep(0.1)
-        # 장애물이 있으면 obs_val == 1
-        else:
-            buff_a = 'j'
-            measure_count += 1
-            print(buff_a, " : WARNING. Obstacle come closing ")
-            os.write(fd_from_yolo, buff_a.encode())
+#             print(buff_a)
+#             # 파일에 fifo로 쓰기 문자열은 .encode()해서 보내야함
+#             os.write(fd_from_yolo, buff_a.encode())
+#             time.sleep(0.1)
+#         # 장애물이 있으면 obs_val == 1
+#         else:
+#             buff_a = 'j'
+#             measure_count += 1
+#             print(buff_a, " : WARNING. Obstacle come closing ")
+#             os.write(fd_from_yolo, buff_a.encode())
             
-        if stopThread_flag == True: # 종료문
-            buff_a = 'j'
-            measure_count += 1
+#         if stopThread_flag == True: # 종료문
+#             buff_a = 'j'
+#             measure_count += 1
             
-            os.write(fd_from_yolo, buff_a.encode())
-            break
+#             os.write(fd_from_yolo, buff_a.encode())
+#             break
 
-    print("fifo thread off")
+#     print("fifo thread off")
 
-    #return buff_a
+#     #return buff_a
 
 # 물체의 좌우 끝 좌표를 받아 그 물체 의 거리값을 가져와주는 함수 
 def location_to_depth(grayimg, loc1, loc2, depth_data):
@@ -205,402 +170,475 @@ def location_to_depth(grayimg, loc1, loc2, depth_data):
 
     return round(100 * target_depth,2)
 
-def detect(opt, server):
+def detect(opt):
+    client = connect_mqtt()
+    client.connect(broker, port)
+    client.loop_start()
 
-    out, source, yolo_weights, deep_sort_weights, show_vid, save_vid, save_txt, imgsz, evaluate, power = \
+    out, source, yolo_weights, deep_sort_weights, show_vid, save_vid, save_txt, imgsz, evaluate = \
         opt.output, opt.source, opt.yolo_weights, opt.deep_sort_weights, opt.show_vid, opt.save_vid, \
-            opt.save_txt, opt.img_size, opt.evaluate, opt.power
+            opt.save_txt, opt.img_size, opt.evaluate
     
-    if opt.power == "on":
+    webcam = source == '0' or '1' or '2' or source.startswith(
+        'rtsp') or source.startswith('http') or source.endswith('.txt')
+
+    global stopThread_flag # 쓰레드 종료명령
+    global target_xval # 쓰레드 사물의x좌표 전달 변수
+    global distance_val # 쓰레드 거리데이터 전달 변수
+    global following_pers  # 추적할 person타겟 초기화 
+    global center_p # 중앙에 가장 가까운 id
+    global obs_val # 멈추기위한 장애물과의 거리    
     
-        webcam = source == '0' or '1' or '2' or source.startswith(
-            'rtsp') or source.startswith('http') or source.endswith('.txt')
+    detect_start = 0.0
+    
+    # initialize deepsort 초기화
+    cfg = get_config()
+    cfg.merge_from_file(opt.config_deepsort)
+    attempt_download(deep_sort_weights, repo='mikel-brostrom/Yolov5_DeepSort_Pytorch')
+    deepsort = DeepSort(cfg.DEEPSORT.REID_CKPT,
+                        max_dist=cfg.DEEPSORT.MAX_DIST, min_confidence=cfg.DEEPSORT.MIN_CONFIDENCE,
+                        max_iou_distance=cfg.DEEPSORT.MAX_IOU_DISTANCE,
+                        max_age=cfg.DEEPSORT.MAX_AGE, n_init=cfg.DEEPSORT.N_INIT, nn_budget=cfg.DEEPSORT.NN_BUDGET,
+                        use_cuda=True)
 
-        global stopThread_flag # 쓰레드 종료명령
-        global target_xval # 쓰레드 사물의x좌표 전달 변수
-        global distance_val # 쓰레드 거리데이터 전달 변수
-        global following_pers  # 추적할 person타겟 초기화 
-        global center_p # 중앙에 가장 가까운 id
-        global obs_val # 멈추기위한 장애물과의 거리 
-        global measure_count     
+    # Initialize
+    device = select_device(opt.device)
+
+    if not evaluate:
+        if os.path.exists(out):
+            pass
+            shutil.rmtree(out)  # delete output folder
+        os.makedirs(out)  # make new output folder
+
+    half = device.type != 'cpu'  # half precision only supported on CUDA
+    # Load model
+    model = attempt_load(yolo_weights, map_location=device)  # load FP32 model
+    stride = int(model.stride.max())  # model stride
+    imgsz = check_img_size(imgsz, s=stride)  # check img_size
+    names = model.module.names if hasattr(model, 'module') else model.names  # get class names
+    if half:
+        model.half()  # to FP16
+
+    # Set Dataloader
+    vid_path, vid_writer = None, None
+    # Check if environment supports image displays
+    if show_vid:
+        show_vid = check_imshow()
+
+    if webcam:
+        cudnn.benchmark = True  # set True to speed up constant image size inference
+        dataset = LoadStreams(source, img_size=imgsz, stride=stride)
+        # read class object with enum ,enumerate(class)
+
+    else:
+        dataset = LoadImages(source, img_size=imgsz, stride=stride)
+
+    # Get names and colors
+    names = model.module.names if hasattr(model, 'module') else model.names
+
+    # Run inference
+    if device.type != 'cpu':
+        model(torch.zeros(1, 3, imgsz, imgsz).to(device).type_as(next(model.parameters())))  # run once
+    t0 = time.time()
+
+    save_path = str(Path(out))
+    # extract what is in between the last '/' and last '.'
+    txt_file_name = source.split('/')[-1].split('.')[0]
+    txt_path = str(Path(out)) + '/' + txt_file_name + '.txt'
+
+    # with ThreadPoolExecutor(max_workers=6) as TPE:
+    #     t1 = TPE.submit(fifoThread)
+
+    #     # 쓰레드 생성실패시
+    #     if t1.result() is None: 
+    #         sys.exit()
         
-        detect_start = 0.0
-        
-        # initialize deepsort 초기화
-        cfg = get_config()
-        cfg.merge_from_file(opt.config_deepsort)
-        attempt_download(deep_sort_weights, repo='mikel-brostrom/Yolov5_DeepSort_Pytorch')
-        deepsort = DeepSort(cfg.DEEPSORT.REID_CKPT,
-                            max_dist=cfg.DEEPSORT.MAX_DIST, min_confidence=cfg.DEEPSORT.MIN_CONFIDENCE,
-                            max_iou_distance=cfg.DEEPSORT.MAX_IOU_DISTANCE,
-                            max_age=cfg.DEEPSORT.MAX_AGE, n_init=cfg.DEEPSORT.N_INIT, nn_budget=cfg.DEEPSORT.NN_BUDGET,
-                            use_cuda=True)
+    # datsset.py로부터 class를 통해 영상들 받아오는곳
+    for frame_idx, (path, img, im0s, vid_cap, depth_img, depth_im0s, depth_data) in enumerate(dataset):
 
-        # Initialize
-        device = select_device(opt.device)
+        #print("frame_idx:",frame_idx,"path:",path,"vid_cap",vid_cap)
+        img = torch.from_numpy(img).to(device)
+        img = img.half() if half else img.float()  # uint8 to fp16/32
+        img /= 255.0  # 0 - 255 to 0.0 - 1.0
+        if img.ndimension() == 3:
+            img = img.unsqueeze(0)
 
-        if not evaluate:
-            if os.path.exists(out):
-                pass
-                shutil.rmtree(out)  # delete output folder
-            os.makedirs(out)  # make new output folder
+        # Inference
+        t1 = time.time()
+        pred = model(img, augment=opt.augment)[0]
 
-        half = device.type != 'cpu'  # half precision only supported on CUDA
-        # Load model
-        model = attempt_load(yolo_weights, map_location=device)  # load FP32 model
-        stride = int(model.stride.max())  # model stride
-        imgsz = check_img_size(imgsz, s=stride)  # check img_size
-        names = model.module.names if hasattr(model, 'module') else model.names  # get class names
-        if half:
-            model.half()  # to FP16
+        # Apply NMS
+        pred = non_max_suppression(
+            pred, opt.conf_thres, opt.iou_thres, classes=opt.classes, agnostic=opt.agnostic_nms)
+        t2 = time_sync()
 
-        # Set Dataloader
-        vid_path, vid_writer = None, None
-        # Check if environment supports image displays
-        if show_vid:
-            show_vid = check_imshow()
+        # Process detections
+        for i, det in enumerate(pred):  # detections per image
+            if webcam:  # batch_size >= 1
+                p, s, im0 = path[i], '%g: ' % i, im0s[i].copy()
+            else:
+                p, s, im0 = path, '', im0s
 
-        if webcam:
-            cudnn.benchmark = True  # set True to speed up constant image size inference
-            dataset = LoadStreams(source, img_size=imgsz, stride=stride)
-            # read class object with enum ,enumerate(class)
+            #depth
+            dep_img = depth_im0s[i].copy() 
+            dm = cv2.flip(dep_img, 1)
+            depth_alpha = cv2.convertScaleAbs(dm, alpha=0.15)
+            dm0 = depth_colorImg = cv2.applyColorMap(depth_alpha, cv2.COLORMAP_JET)
 
-        else:
-            dataset = LoadImages(source, img_size=imgsz, stride=stride)
+            depth_grayimg = cv2.cvtColor(dm0,cv2.COLOR_RGBA2GRAY)
+            # 영상 이진화 OTSU
+            _, OTSU_binary = cv2.threshold(depth_grayimg, 0, 255, cv2.THRESH_OTSU)
+            # 가우시안 블러와 OTSU로 노이즈제거
+            OTSU_blur = cv2.GaussianBlur(OTSU_binary, (5, 5), 0)
+            cv2.imshow("OTSU_blur", OTSU_blur)
+            ret, OTSU_gaubin = cv2.threshold(OTSU_blur, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+            cv2.imshow('src_gaubin', OTSU_gaubin)
 
-        # Get names and colors
-        names = model.module.names if hasattr(model, 'module') else model.names
+            # STEP 5. 외곽선 검출
+            # cv2 contours 외곽선 추출함수
+            contours, _ = cv2.findContours(OTSU_gaubin, cv2.RETR_LIST, cv2.CHAIN_APPROX_NONE)
+            contours_images = np.zeros((480, 640, 3), np.uint8) # 검은판 하나 생성
+            # 모든 객체 외곽선
+            for Line_idx in range(len(contours)):
+                color = (0,0,255) 
+                cv2.drawContours(contours_images, contours, Line_idx, color, 1, cv2.LINE_AA)
 
-        # Run inference
-        if device.type != 'cpu':
-            model(torch.zeros(1, 3, imgsz, imgsz).to(device).type_as(next(model.parameters())))  # run once
-        t0 = time.time()
+            # 장애물 외곽선 연결선
+            box_cnt = 0 # 박스번호
+            close_Obs_flag = 0 # 근접한 장애물
+            for contour in contours:
+                # convexHull 나머지 모든점을 포함하는 다각형을 만들어내는 알고리즘 = 장애물 외곽선
+                conhull = cv2.convexHull(contour)
+                hull = np.max(conhull, axis=1)
+                maxbox = np.max(hull, axis=1)
 
-        save_path = str(Path(out))
-        # extract what is in between the last '/' and last '.'
-        txt_file_name = source.split('/')[-1].split('.')[0]
-        txt_path = str(Path(out)) + '/' + txt_file_name + '.txt'
-
-        # fifo쓰레드 생성
-        t1 = threading.Thread(target = fifoThread, args=())
-        # 쓰레드 생성실패시
-        if t1 is None: 
-            sys.exit()
-        else: # 성공시
-            t1.start()
-
-        # datsset.py로부터 class를 통해 영상들 받아오는곳
-        for frame_idx, (path, img, im0s, vid_cap, depth_img, depth_im0s, depth_data) in enumerate(dataset):
-
-            #print("frame_idx:",frame_idx,"path:",path,"vid_cap",vid_cap)
-            img = torch.from_numpy(img).to(device)
-            img = img.half() if half else img.float()  # uint8 to fp16/32
-            img /= 255.0  # 0 - 255 to 0.0 - 1.0
-            if img.ndimension() == 3:
-                img = img.unsqueeze(0)
-
-            # Inference
-            t1 = time.time()
-            pred = model(img, augment=opt.augment)[0]
-
-            # Apply NMS
-            pred = non_max_suppression(
-                pred, opt.conf_thres, opt.iou_thres, classes=opt.classes, agnostic=opt.agnostic_nms)
-            t2 = time_sync()
-
-            # Process detections
-            for i, det in enumerate(pred):  # detections per image
-                if webcam:  # batch_size >= 1
-                    p, s, im0 = path[i], '%g: ' % i, im0s[i].copy()
-                else:
-                    p, s, im0 = path, '', im0s
-
-                #depth
-                dep_img = depth_im0s[i].copy() 
-                dm = cv2.flip(dep_img, 1)
-                depth_alpha = cv2.convertScaleAbs(dm, alpha=0.15)
-                dm0 = depth_colorImg = cv2.applyColorMap(depth_alpha, cv2.COLORMAP_JET)
-
-                depth_grayimg = cv2.cvtColor(dm0,cv2.COLOR_RGBA2GRAY)
-                # 영상 이진화 OTSU
-                _, OTSU_binary = cv2.threshold(depth_grayimg, 0, 255, cv2.THRESH_OTSU)
-                # 가우시안 블러와 OTSU로 노이즈제거
-                OTSU_blur = cv2.GaussianBlur(OTSU_binary, (5, 5), 0)
-                cv2.imshow("OTSU_blur", OTSU_blur)
-                ret, OTSU_gaubin = cv2.threshold(OTSU_blur, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-                cv2.imshow('src_gaubin', OTSU_gaubin)
-
-                # STEP 5. 외곽선 검출
-                # cv2 contours 외곽선 추출함수
-                contours, _ = cv2.findContours(OTSU_gaubin, cv2.RETR_LIST, cv2.CHAIN_APPROX_NONE)
-                contours_images = np.zeros((480, 640, 3), np.uint8) # 검은판 하나 생성
-                # 모든 객체 외곽선
-                for Line_idx in range(len(contours)):
-                    color = (0,0,255) 
-                    cv2.drawContours(contours_images, contours, Line_idx, color, 1, cv2.LINE_AA)
-
-                # 장애물 외곽선 연결선
-                box_cnt = 0 # 박스번호
-                close_Obs_flag = 0 # 근접한 장애물
-                for contour in contours:
-                    # convexHull 나머지 모든점을 포함하는 다각형을 만들어내는 알고리즘 = 장애물 외곽선
-                    conhull = cv2.convexHull(contour)
-                    hull = np.max(conhull, axis=1)
-                    maxbox = np.max(hull, axis=1)
-
-                    
-                    # 최대값x와 최소값x을 뺀 절대값이 (노란박스크기가)작은건 안그려지게한다
-                    if abs(max(maxbox) - min(maxbox)) > 90:  
-                        cv2.drawContours(contours_images, [conhull], 0, (0, 255, 255), 3)  
-
-                        # 한 박스(hull) 마다  맨 좌측값, 맨우측값 가져오기
-                        max_x = np.array([24, 0]) # y축 맨오른쪽좌표가 들어갈 변수
-                        min_x = np.array([639, 0])  # y축 맨왼쪽좌표가 들어갈 변수
-                        for count in hull:
-                            if max_x[0] < count[0]:
-                                max_x = count 
-                            if min_x[0] > count[0]:
-                                min_x = count
-                        cv2.circle(contours_images, max_x, 3, (255, 0, 0), 2, cv2.LINE_AA)  # 최우측 좌표에 파란
-                        cv2.circle(contours_images, min_x, 3, (255, 255, 0), 2, cv2.LINE_AA)  # 최좌측 좌표에 청록
-                        # 장애물하나당 거리값 구해오는 함수
-                        obs_depth = location_to_depth(depth_grayimg, min_x, max_x, depth_data)
-                        #print(obs_depth)
-                    # 최소 장애물과의 거리. 이에 아래값에 도달할경우 거리값전달 멈추기
-                        if obs_depth < 50.0:
-                            close_Obs_flag = 1
-
-                    # 박스 다음번호로
-                    box_cnt = box_cnt + 1
-                    # 검출된 노란박스중에 가까운박스(close_Obs_flag)가 있으면 멈추는명령 쓰레드로전달
-                    if close_Obs_flag:
-                        obs_val = 1 #멈춤
-                    else:
-                        obs_val = 0 #없음
-
-                cv2.imshow("src", contours_images)
-
-                s += '%gx%g ' % img.shape[2:]  # print string
-                save_path = str(Path(out) / Path(p).name)
-
-                # box
-                annotator = Annotator(im0, line_width=2, pil=not ascii)
-                annotator2 = Annotator(dm0, line_width=2, pil=not ascii)            
-
-                if det is not None and len(det):
-                    # Rescale boxes from img_size to im0 size
-                    det[:, :4] = scale_coords(
-                        img.shape[2:], det[:, :4], im0.shape).round()
-
-                    # Print results
-                    for c in det[:, -1].unique():
-                        n = (det[:, -1] == c).sum()  # detections per class
-                        s += f"{n} {names[int(c)]}{'s' * (n > 1)}, "  # add to string
-
-                    xywhs = xyxy2xywh(det[:, 0:4])
-                    confs = det[:, 4]
-                    clss = det[:, 5]
-
-                    # pass detections to deepsort
-                    outputs = deepsort.update(xywhs.cpu(), confs.cpu(), clss.cpu(), im0)
-                    
-                    boxCent_list = []
-                    # 박스 하나당 draw boxes for visualization
-                    if len(outputs) > 0:
-                        for j, (output, conf) in enumerate(zip(outputs, confs)): 
-                            
-                            bboxes = output[0:4]
-                            id = output[4]
-                            cls = output[5]                       
-                                                
-                            c = int(cls)  # integer class
-                            label = f'{id} {names[c]} {conf:.2f}'
-                            annotator.box_label(bboxes, label, color=colors(c, True))
-
-                            w = 640
-                            h = 480
-                            depth_w = (w-20) * 23 // 35
-                            depth_h = h * 2 // 3
-                            
-                            start_left =  depth_w * (output[0] / w) + (w-20) // 7 # 왼쪽위 x좌표
-                            start_top =  depth_h * (output[1] / h) + h // 6 # 왼쪽위 y좌표
-                            end_left =  depth_w * (output[2] / w) + (w-20) // 7 # 오른쪽아래 x좌표
-                            end_top =  depth_h * (output[3] / h) + h // 6 # 오른쪽아래 y좌표  
                 
-                            # 박스의 중앙값들 리스트로 전
-                            x_center = (start_left + end_left) // 2
-                            y_center = (start_top + end_top) // 2
-                            boxCent_list.append([id, x_center,y_center])
-                
-                            # 뎁스와 다른 컬러맵의 왼쪽 끝 잘라내기
-                            if output[0] >= 20:
-                                bboxes2 = np.array([start_left, start_top, end_left, end_top])  
-                            else:
-                                bboxes2 = np.array([(w-20) // 7, start_top, end_left, end_top])
-                            annotator2.box_label(bboxes2, label, color=colors(c, True))
+                # 최대값x와 최소값x을 뺀 절대값이 (노란박스크기가)작은건 안그려지게한다
+                if abs(max(maxbox) - min(maxbox)) > 90:  
+                    cv2.drawContours(contours_images, [conhull], 0, (0, 255, 255), 3)  
 
-                            if save_txt:
-                                # to MOT format
-                                bbox_left = output[0]
-                                bbox_top = output[1]
-                                bbox_w = output[2] - output[0]
-                                bbox_h = output[3] - output[1]
-                                # Write MOT compliant results to file
-                                with open(txt_path, 'a') as f:
-                                    f.write(('%g ' * 10 + '\n') % (frame_idx, id, bbox_left,
-                                                                bbox_top, bbox_w, bbox_h, -1, -1, -1, -1))  # label format
+                    # 한 박스(hull) 마다  맨 좌측값, 맨우측값 가져오기
+                    max_x = np.array([24, 0]) # y축 맨오른쪽좌표가 들어갈 변수
+                    min_x = np.array([639, 0])  # y축 맨왼쪽좌표가 들어갈 변수
+                    for count in hull:
+                        if max_x[0] < count[0]:
+                            max_x = count 
+                        if min_x[0] > count[0]:
+                            min_x = count
+                    cv2.circle(contours_images, max_x, 3, (255, 0, 0), 2, cv2.LINE_AA)  # 최우측 좌표에 파란
+                    cv2.circle(contours_images, min_x, 3, (255, 255, 0), 2, cv2.LINE_AA)  # 최좌측 좌표에 청록
+                    # 장애물하나당 거리값 구해오는 함수
+                    obs_depth = location_to_depth(depth_grayimg, min_x, max_x, depth_data)
+                    #print(obs_depth)
+                # 최소 장애물과의 거리. 이에 아래값에 도달할경우 거리값전달 멈추기
+                    if obs_depth < 50.0:
+                        close_Obs_flag = 1
 
-                            dep_x, dep_y = int((start_left+end_left)//2),int((start_top+end_top)//2)
-                            target_distacne = depth_data.get_distance(dep_x, dep_y)
-                            cv2.circle(dm0,(dep_x, dep_y),2,(0,0,122),1,cv2.LINE_AA)
-
-                            # 타겟의 거리가 적당한것만 (오류제외)
-                            if 0.01 < target_distacne < 7.0:
-                                # 맨처음 키자마자 추적할놈은?
-                                if following_pers == 0:
-                                    following_pers = center_p
-                                # print ("현재 타겟 {}를 추적중입니다.".format(following_pers)) 
-                                # 내가 원하는 타겟 person 만 쫒아가게하려면. following_pers값을 조정
-                                if following_pers == id:
-                                    # 타켓person의 x축위치를 fifo쓰레드로 전달
-                                    target_xval = ((start_left + end_left) / 2) / w
-                                    # 타켓person의 거리를 fifo쓰레드로 전달 
-                                    distance_val = int(target_distacne * 100)
-                                    print("{} : 타겟 person과의 거리 = {:.2f} cm".format(id, target_distacne * 100))
-
-                                # 타겟외에 다른 person
-                                #else:
-                                #    print(id,":person과의 거리 = {:.2f} cm".format(target_distacne * 100))
-
-                            # class의 target : person 0 id -> 2,3,4,5을 바꿔가며 쫒아가는달
-
-                        # 중앙값리스틀 가장 중앙에서 가까운 박스찾기
-                        max_center = [0, 1000.0] # 임시변수 초기값 [초기id, 중앙에서 가장먼거리]
-                        cv2.circle(dm0, (320,240), 3, (255, 0, 255), 2, cv2.LINE_AA)
-                        for name, x, y in boxCent_list:
-                            name_x= abs(320 - x)
-                            name_y= abs(240 - y)
-                            dist_fromCent = math.sqrt(name_x**2 + name_y**2) #중앙으로 부터의 거리
-                            if max_center[1] > dist_fromCent:
-                                max_center = name, dist_fromCent 
-                        center_p = max_center[0] #id와 중앙부터거리 center_p[0],[1]에 저장
-                        print("중앙에서 가장 가까운 객체id:{}, 거리:{} ".format(max_center[0],int(max_center[1])))
-
+                # 박스 다음번호로
+                box_cnt = box_cnt + 1
+                # 검출된 노란박스중에 가까운박스(close_Obs_flag)가 있으면 멈추는명령 쓰레드로전달
+                if close_Obs_flag:
+                    obs_val = 1 #멈춤
                 else:
-                    deepsort.increment_ages()
+                    obs_val = 0 #없음
 
-                # 객체A 검출에 걸리는 시간 (inference + NMS)
-                #print('%sDone. (%.3fs)' % (s, t2 - t1))
+            cv2.imshow("src", contours_images)
 
-                # Stream results
-                im0 = annotator.result()
-                dm0 = annotator2.result()
-                if show_vid:
-                    cv2.imshow("deteciton", im0)
-                    cv2.imshow("dm0", dm0)
-                    # inputKey = cv2.waitKey(1)
-                    # if inputKey == ord('q') or inputKey == 27:  # q or esc to quit
-                    #     # 쓰레드 종료명령
-                    #     stopThread_flag = True
-                    #     # 종료
-                    #     raise StopIteration
-                    # elif inputKey == ord('a'):
-                    #     following_pers = center_p
-                    #     inputKey = 0
+            s += '%gx%g ' % img.shape[2:]  # print string
+            save_path = str(Path(out) / Path(p).name)
 
-                detect_end = time.time()         
-                detect_time = detect_end - detect_start
-                detect_start = detect_end
-                fps = 1/detect_time
+            # box
+            annotator = Annotator(im0, line_width=2, pil=not ascii)
+            annotator2 = Annotator(dm0, line_width=2, pil=not ascii)            
 
-                print(f'{fps:.5f} fps')
+            if det is not None and len(det):
+                # Rescale boxes from img_size to im0 size
+                det[:, :4] = scale_coords(
+                    img.shape[2:], det[:, :4], im0.shape).round()
+
+                # Print results
+                for c in det[:, -1].unique():
+                    n = (det[:, -1] == c).sum()  # detections per class
+                    s += f"{n} {names[int(c)]}{'s' * (n > 1)}, "  # add to string
+
+                xywhs = xyxy2xywh(det[:, 0:4])
+                confs = det[:, 4]
+                clss = det[:, 5]
+
+                # pass detections to deepsort
+                outputs = deepsort.update(xywhs.cpu(), confs.cpu(), clss.cpu(), im0)
+                
+                boxCent_list = []
+                # 박스 하나당 draw boxes for visualization
+                if len(outputs) > 0:
+                    for j, (output, conf) in enumerate(zip(outputs, confs)): 
+                        
+                        bboxes = output[0:4]
+                        id = output[4]
+                        cls = output[5]                       
+                                            
+                        c = int(cls)  # integer class
+                        label = f'{id} {names[c]} {conf:.2f}'
+                        annotator.box_label(bboxes, label, color=colors(c, True))
+
+                        w = 640
+                        h = 480
+                        depth_w = (w-20) * 23 // 35
+                        depth_h = h * 2 // 3
+                        
+                        start_left =  depth_w * (output[0] / w) + (w-20) // 7 # 왼쪽위 x좌표
+                        start_top =  depth_h * (output[1] / h) + h // 6 # 왼쪽위 y좌표
+                        end_left =  depth_w * (output[2] / w) + (w-20) // 7 # 오른쪽아래 x좌표
+                        end_top =  depth_h * (output[3] / h) + h // 6 # 오른쪽아래 y좌표  
+            
+                        # 박스의 중앙값들 리스트로 전
+                        x_center = (start_left + end_left) // 2
+                        y_center = (start_top + end_top) // 2
+                        boxCent_list.append([id, x_center,y_center])
+            
+                        # 뎁스와 다른 컬러맵의 왼쪽 끝 잘라내기
+                        if output[0] >= 20:
+                            bboxes2 = np.array([start_left, start_top, end_left, end_top])  
+                        else:
+                            bboxes2 = np.array([(w-20) // 7, start_top, end_left, end_top])
+                        annotator2.box_label(bboxes2, label, color=colors(c, True))
+
+                        if save_txt:
+                            # to MOT format
+                            bbox_left = output[0]
+                            bbox_top = output[1]
+                            bbox_w = output[2] - output[0]
+                            bbox_h = output[3] - output[1]
+                            # Write MOT compliant results to file
+                            with open(txt_path, 'a') as f:
+                                f.write(('%g ' * 10 + '\n') % (frame_idx, id, bbox_left,
+                                                            bbox_top, bbox_w, bbox_h, -1, -1, -1, -1))  # label format
+
+                        dep_x, dep_y = int((start_left+end_left)//2),int((start_top+end_top)//2)
+                        target_distacne = depth_data.get_distance(dep_x, dep_y)
+                        cv2.circle(dm0,(dep_x, dep_y),2,(0,0,122),1,cv2.LINE_AA)
+
+                        # 타겟의 거리가 적당한것만 (오류제외)
+                        if 0.01 < target_distacne < 7.0:
+                            # 맨처음 키자마자 추적할놈은?
+                            if following_pers == 0:
+                                following_pers = center_p
+                            # print ("현재 타겟 {}를 추적중입니다.".format(following_pers)) 
+                            # 내가 원하는 타겟 person 만 쫒아가게하려면. following_pers값을 조정
+                            if following_pers == id:
+                                # 타켓person의 x축위치를 fifo쓰레드로 전달
+                                target_xval = ((start_left + end_left) / 2) / w
+                                # 타켓person의 거리를 fifo쓰레드로 전달 
+                                distance_val = int(target_distacne * 100)
+                                print("{} : 타겟 person과의 거리 = {:.2f} cm".format(id, target_distacne * 100))
+
+                            # 타겟외에 다른 person
+                            #else:
+                            #    print(id,":person과의 거리 = {:.2f} cm".format(target_distacne * 100))
+
+                        # class의 target : person 0 id -> 2,3,4,5을 바꿔가며 쫒아가는달
+
+                    # 중앙값리스틀 가장 중앙에서 가까운 박스찾기
+                    max_center = [0, 1000.0] # 임시변수 초기값 [초기id, 중앙에서 가장먼거리]
+                    cv2.circle(dm0, (320,240), 3, (255, 0, 255), 2, cv2.LINE_AA)
+                    for name, x, y in boxCent_list:
+                        name_x= abs(320 - x)
+                        name_y= abs(240 - y)
+                        dist_fromCent = math.sqrt(name_x**2 + name_y**2) #중앙으로 부터의 거리
+                        if max_center[1] > dist_fromCent:
+                            max_center = name, dist_fromCent 
+                    center_p = max_center[0] #id와 중앙부터거리 center_p[0],[1]에 저장
+                    print("중앙에서 가장 가까운 객체id:{}, 거리:{} ".format(max_center[0],int(max_center[1])))
+
+            else:
+                deepsort.increment_ages()
+
+            # 객체A 검출에 걸리는 시간 (inference + NMS)
+            #print('%sDone. (%.3fs)' % (s, t2 - t1))
+
+            # Stream results
+            im0 = annotator.result()
+            dm0 = annotator2.result()
+            if show_vid:
+                cv2.imshow("deteciton", im0)
+                cv2.imshow("dm0", dm0)
+                # inputKey = cv2.waitKey(1)
+                # if inputKey == ord('q') or inputKey == 27:  # q or esc to quit
+                    # 쓰레드 종료명령
                     
-                # 영상 저장 (image with detections)
-                if save_vid:
-                    if vid_path != save_path:  # new video
-                        vid_path = save_path
-                        if isinstance(vid_writer, cv2.VideoWriter):
-                            vid_writer.release()  # release previous video writer
-                        if vid_cap:  # video
-                            fps = vid_cap.get(cv2.CAP_PROP_FPS)
-                            w = int(vid_cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-                            h = int(vid_cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-                            print("fps:",fps, "w:", w, "h:",h)
-                        else:  # stream
-                            fps, w, h = 30, im0.shape[1], im0.shape[0]
-                            save_path += '.mp4'
+                #     # 종료
+                #     raise StopIteration
+                # elif inputKey == ord('a'):
+                #     following_pers = center_p
+                #     inputKey = 0
 
-                        vid_writer = cv2.VideoWriter(save_path, cv2.VideoWriter_fourcc(*'mp4v'), fps, (w, h))
-                    vid_writer.write(im0)
-        # 로그 txt파일
-        if save_txt or save_vid:
-            print('Results saved to %s' % os.getcwd() + os.sep + out)
-            if platform == 'darwin':  # MacOS
-                os.system('open ' + save_path)
+            detect_end = time.time()         
+            detect_time = detect_end - detect_start
+            detect_start = detect_end
+            fps = 1/detect_time
 
-        # 전체 작동시간fps
-        print('Done. (%.3fs)' % (time.time() - t0))
+            # fifo쓰레드 생성
+            fifoThread()
+    
+            print(f'{fps:.5f} fps')
+                
+            # 영상 저장 (image with detections)
+            if save_vid:
+                if vid_path != save_path:  # new video
+                    vid_path = save_path
+                    if isinstance(vid_writer, cv2.VideoWriter):
+                        vid_writer.release()  # release previous video writer
+                    if vid_cap:  # video
+                        fps = vid_cap.get(cv2.CAP_PROP_FPS)
+                        w = int(vid_cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+                        h = int(vid_cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+                        print("fps:",fps, "w:", w, "h:",h)
+                    else:  # stream
+                        fps, w, h = 30, im0.shape[1], im0.shape[0]
+                        save_path += '.mp4'
 
-    elif opt.power == "off":
-        server.disconnect()
-        
+                    vid_writer = cv2.VideoWriter(save_path, cv2.VideoWriter_fourcc(*'mp4v'), fps, (w, h))
+                vid_writer.write(im0)
+    # 로그 txt파일
+    if save_txt or save_vid:
+        print('Results saved to %s' % os.getcwd() + os.sep + out)
+        if platform == 'darwin':  # MacOS
+            os.system('open ' + save_path)
+
+    # 전체 작동시간fps
+    stopThread_flag = True
+    #TPE.shutdown()
+    client.disconnect()
+    print('Done. (%.3fs)' % (time.time() - t0))
+    sys.exit()
+
 # --> mqtt function
 def connect_mqtt() -> mqtt:
-    def on_connect(server, userdata, flags, rc):
+    def on_connect(client, userdata, flags, rc):
         if rc == 0:
-                print("Connected to MQTT Broker!")
-                server.subscribe(topic)
+                print("deepsort to MQTT on.")
+
         else:
             print("Failed to connect, return code %d\n", rc)
 
-    server = mqtt.Client(client_id)
+    client = mqtt.Client(client_id)
         
-    server.username_pw_set(username, password)
-    server.on_connect = on_connect
-    server.connect(broker, port)
+    client.username_pw_set(username, password)
+    client.on_connect = on_connect
+    client.on_publish = on_publish
+    client.connect(broker, port)
 
-    return server
+    return client
 
-def subscribe(server: mqtt):
-    def on_message(server, userdata, msg):
+def fifoThread(client):
+    global stopThread_flag # 쓰레드 종료flag
+    global target_xval # fifo 사물의x좌표 전달 변수
+    global distance_val # fifo 거리데이터 전달 변수
+    global obs_val  # 멈추기위한 장애물과의 거리 
+    global fifo_start
 
-        global fifo_start
-        global str_msg
-
-        fifo_start = time.time()
-                
-        str_msg = str(msg.payload.decode("utf-8"))
-        
-        if str_msg == "deepsort_on":
-            
-            print("deepsort ON.")
-            args = cmd_argument()
-
-            with ProcessPoolExecutor(max_workers=2) as PPE:
-                with torch.no_grad():
-                    PPE.submit(detect, args, server)
-
-                    try:
-                        PPE.shutdown(wait=True)
-                    except RuntimeError:
-                        print("process is alerady shutdowned -> Runtimeout.")
-
-        if str_msg == "deepsort_off":
-            print("deepsort OFF.")
-            os.system('python3 exit.py')
-
-            
-    server.subscribe(topic)
-    server.on_message = on_message
-
-def on_subscribe(server, obj, mid, granted_qos):
-    print("Subscribed : " + str(mid) + " " + str(granted_qos))
-
-def run():
-    server = connect_mqtt()
-    subscribe(server)
-    server.loop_forever()
+    print("fifo thread on")
     
+    fifo_end = time.time()
+    print("time to fifo : ", fifo_end - fifo_start)
+
+    while True:
+        
+        # 장애물이 없으면.
+        if obs_val == 0:
+            # 타겟의 x좌표의 오른쪽에있고, 오른쪽으로 회전하기 위한값을 fifo로전달
+            if target_xval > 0.9:
+                buff_a = b'A'
+                
+            elif target_xval > 0.8:
+                buff_a = b'B'
+                
+            elif target_xval > 0.7:
+                buff_a = b'C'
+                
+            elif target_xval > 0.6:
+                buff_a = b'D'
+                
+            # 타겟의 x좌표가 왼쪽에있고, 왼쪽으로 회전하기 위한값을 fifo로전달
+            elif target_xval < 0.4:
+                buff_a = b'E'
+                
+            elif target_xval < 0.3:
+                buff_a = b'F'                   
+                
+            elif target_xval < 0.2:
+                buff_a = b'G'               
+                
+            elif target_xval < 0.1:
+                buff_a = b'H'
+                
+            # 타겟의 x좌표가 중앙 0.5에 있을때
+            else:
+                # 타겟과의 거리가 멀리있을때 전진
+                if distance_val > 80.0:
+                    buff_a = b'c'
+
+                # 타겟과의 거리가 가까이있을때 후진
+                # elif distance_val < 0.5:
+                #     buff_a = 'd'
+                # 타겟과의 거리가 적당거리일떄 멈춤
+                else:
+                    buff_a = b'j'
+                    
+            client.publish(topic, buff_a)
+            print(f"Send payload : {buff_a}")
+            # # 파일에 fifo로 쓰기 문자열은 .encode()해서 보내야함
+            # os.write(fd_from_yolo, buff_a.encode())
+            # time.sleep(0.1)
+        # 장애물이 있으면 obs_val == 1
+        else:
+            buff_a = b'j'
+            client.publish(topic, buff_a)
+
+            print(f"{buff_a} : WARNING. Obstacle come closing ")
+            # os.write(fd_from_yolo, buff_a.encode())
+            
+        if stopThread_flag == True: # 종료문
+            buff_a = b'j'
+            client.publish(topic, buff_a)
+            print("Stop activate.")
+
+            # os.write(fds_from_yolo, buff_a.encode())
+            break
+
+    print("fifo thread off")
+
+    #return buff_a 
+    
+# def subscribe(client: mqtt):
+#     def on_message(client, userdata, msg):
+
+#         global fifo_start
+#         global str_msg
+
+#         fifo_start = time.time()
+                
+#         # str_msg = str(msg.payload.decode("utf-8"))
+#         with ProcessPoolExecutor(max_workers=2) as PPE:
+#             args = cmd_argument()
+#             with torch.no_grad():
+#                 PPE.submit(detect, args)
+
+#                 try:
+#                     PPE.shutdown(wait=True)
+#                 except RuntimeError:
+#                     print("process is alerady shutdowned -> Runtimeout.")
+
+#     client.on_message = on_message
+
+def on_publish(client, obj, mid):
+    print("Published -- mid : " + str(mid))
+
+# def run():
+#     client = connect_mqtt()
+#     subscribe(client)
+#     client.loop_forever()
+
 def cmd_argument():
     
     global fifo_start
@@ -627,9 +665,6 @@ def cmd_argument():
     parser.add_argument('--evaluate', action='store_true', help='augmented inference')
     parser.add_argument("--config_deepsort", type=str, default="deep_sort_pytorch/configs/deep_sort.yaml")
 
-    # PyQT GUI -> Xavier cmd
-    parser.add_argument('--power', type=str, default='on', help='you select deepsort on | off')
-
     args = parser.parse_args()
 
     args.img_size = check_img_size(args.img_size)
@@ -645,5 +680,10 @@ if __name__ == '__main__':
     # global fifo_start
     # fifo_start = time.time()
 
-    run()
+    args = cmd_argument()
+    with ProcessPoolExecutor(max_workers=2) as PPE:
+        args = cmd_argument()
+        with torch.no_grad():
+            PPE.submit(detect, args)
+
 
