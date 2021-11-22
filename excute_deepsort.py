@@ -38,8 +38,8 @@ def subscribe(client: mqtt_client):
         if str_msg == "deepsort_on":
             print(f"Received `{str_msg}` from `{msg.topic}` topic")
             print("deepsort ON..")
-            os.system('python3 paho_mqtt_sub_depth_test.py')
-  
+            os.system('python3 paho_mqtt_pub_depth_to_motor_test.py')
+           
             #os.system('python3 exit.py')
 
             # if str_msg == "deepsort_off":

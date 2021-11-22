@@ -40,7 +40,16 @@ def subscribe(client: mqtt_client):
                 if processName[:7] == "python3":
                     commandLine = proc.cmdline()
 
-                    if "paho_mqtt_sub_depth_test.py" in commandLine:
+                    if "paho_mqtt_pub_depth_to_motor_test.py" in commandLine:
+                        parent_pid = processID
+                        parent = psutil.Process(parent_pid)
+
+                        for child in parent.children(recursive=True):
+                            child.kill()
+                            
+                        parent.kill()
+
+                    elif "paho_mqtt_sub_depth_to_motor_test.py" in commandLine:
                         parent_pid = processID
                         parent = psutil.Process(parent_pid)
 

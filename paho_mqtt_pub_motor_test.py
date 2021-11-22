@@ -4,11 +4,18 @@ import threading
 import time
 import serial
 import signal 
+import random
 
 import paho.mqtt.client as mqtt
 
 # MQTT Value
+broker = 'broker.emqx.io'
+port = 1883
+topic = "python/depth"
 
+client_id = f'python-mqtt-{random.randint(0, 100)}'
+username = 'emqx'
+password = 'public'
 
 # Motor Control Function
 class MotorCon:
@@ -58,13 +65,14 @@ def on_publish(client, obj, mid):
 if __name__ == '__main__':
 
     try:
-        client = mqtt.Client()
+        client = mqtt.Client(client_id)
+        client.username_pw_set(username, password)
         client.on_log = on_log
         client.on_message = on_message
         client.on_connect = on_connect
         client.on_publish = on_publish
          
-        client.connect("mqtt.eclipseprojects.io", 1883, 60)
+        client.connect(broker, port)
         # client.connect("test.mosquitto.org", 1883, 60)
 
         motorCon = MotorCon()
@@ -73,10 +81,11 @@ if __name__ == '__main__':
         while True:
             command = motorCon.mainMenu()
             if command == 'q':
-                client.disconnect()
-                sys.exit()
-
-            pub_chk = client.publish("mqtt/paho", command)
+                print("quit command.")
+                #client.disconnect()
+            
+            # pub_chk = client.publish("mqtt/paho", command)
+            pub_chk = client.publish(topic, command)
             pub_chk.wait_for_publish()
 
     except KeyboardInterrupt:

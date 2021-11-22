@@ -44,6 +44,7 @@ from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
 # --> mqtt function
 class mqttClass():
     def __init__(self):
+        
         # generate client ID with pub prefix randomly
         self.client_id = f'python-mqtt-{random.randint(0, 100)}'
         self.username = 'emqx'
@@ -54,22 +55,6 @@ class mqttClass():
         self.broker = 'broker.emqx.io'
         self.port = 1883
         self.topic = "python/depth"
-
-        self.opt = self.cmd_argument()
-
-    def connect_mqtt(self) -> mqtt:
-        def on_connect(client, userdata, flags, rc):
-            if rc == 0:
-                print("deepsort to MQTT on.")
-
-            else:
-                print("Failed to connect, return code %d\n", rc)
-
-        self.client.username_pw_set(self.username, self.password)
-        self.client.on_connect = on_connect
-        self.client.connect(self.broker, self.port)
-
-        return self.client
 
     def cmd_argument(self):
         
@@ -95,33 +80,50 @@ class mqttClass():
         parser.add_argument('--evaluate', action='store_true', help='augmented inference')
         parser.add_argument("--config_deepsort", type=str, default="deep_sort_pytorch/configs/deep_sort.yaml")
 
-        self.opt = parser.parse_args()
+        opt = parser.parse_args()
 
-        self.opt.img_size = check_img_size(self.opt.img_size)
-        self.opt.source = '2'
-        self.opt.yolo_weights = 'yolov5s.pt'
-        self.opt.show_vid = True
-        self.opt.classes = 0
+        opt.img_size = check_img_size(opt.img_size)
+        opt.source = '2'
+        opt.yolo_weights = 'yolov5s.pt'
+        opt.show_vid = True
+        opt.classes = 0
 
-        return self.opt
+        return opt
+
+    def connect_mqtt(self) -> mqtt:
+        def on_connect(client, userdata, flags, rc):
+            if rc == 0:
+                print("deepsort to MQTT on.")
+
+            else:
+                print("Failed to connect, return code %d\n", rc)
+
+        self.client.username_pw_set(self.username, self.password)
+        self.client.on_connect = on_connect
+        self.client.connect(self.broker, self.port)
+
+        return self.client
 
     def run(self):
         client = self.connect_mqtt()
         client.loop_start()
 
-class deep_sort(mqttClass):
-    def __init__(self, client, topic, opt):
-        self.stopThread_flag = False # 쓰레드 종료명령
+class deepsortClass(mqttClass):
+    def __init__(self, client, topic, opt, mqtt_start, stopThread_flag):
+        
+        self.client = client    
+        self.opt = opt
+        self.topic = topic
+        self.mqtt_start = mqtt_start
+        
+        self.stopThread_flag = stopThread_flag # 쓰레드 종료명령
         self.target_xval = 0.5 # 쓰레드 사물의x좌표 전달 변수
         self.distance_val = 0.0 # 쓰레드 거리데이터 전달 변수
         self.obs_val = 0 # 멈추기위한 장애물과의 거리 
         self.center_p = 0 # 중앙에 가장 가까운 id
         self.following_pers = 0 # 추적할 person타겟 초기화 
         self.boxCent_list = []
-        self.client = client    
-        self.opt = opt
-        self.topic = topic
-
+        
     # 물체의 좌우 끝 좌표를 받아 그 물체 의 거리값을 가져와주는 함수 
     def location_to_depth(self, grayimg, loc1, loc2, depth_data):
         if loc1[0] < loc2[0]:
@@ -138,9 +140,84 @@ class deep_sort(mqttClass):
 
         return round(100 * target_depth,2)
 
-    def detect(self):
+    def publisher(self):
+        while True:
+            if self.stopThread_flag == True: # 종료문
+                buff_a = b'j'
+                self.client.publish(self.topic, buff_a)
+                print("Stop activate.")
 
-        global fifo_start
+                # os.write(fds_from_yolo, buff_a.encode())
+                break
+
+            # 장애물이 없으면.
+            if self.obs_val == 0:
+                # 타겟의 x좌표의 오른쪽에있고, 오른쪽으로 회전하기 위한값을 fifo로전달
+                if self.target_xval > 0.9:
+                    buff_a = b'A'
+                    
+                elif self.target_xval > 0.8:
+                    buff_a = b'B'
+                    
+                elif self.target_xval > 0.7:
+                    buff_a = b'C'
+                    
+                elif self.target_xval > 0.6:
+                    buff_a = b'D'
+                    
+                # 타겟의 x좌표가 왼쪽에있고, 왼쪽으로 회전하기 위한값을 fifo로전달
+                elif self.target_xval < 0.4:
+                    buff_a = b'E'
+                    
+                elif self.target_xval < 0.3:
+                    buff_a = b'F'                   
+                    
+                elif self.target_xval < 0.2:
+                    buff_a = b'G'               
+                    
+                elif self.target_xval < 0.1:
+                    buff_a = b'H'
+                    
+                # 타겟의 x좌표가 중앙 0.5에 있을때
+                else:
+                    # 타겟과의 거리가 멀리있을때 전진
+                    if self.distance_val > 80.0:
+                        buff_a = b'h'
+
+                    # 타겟과의 거리가 가까이있을때 후진
+                    # elif distance_val < 0.5:
+                    #     buff_a = 'd'
+                    elif 45.0 < self.distance_val <= 80.0:
+                        buff_a = b'k'
+
+                    # 타겟과의 거리가 적당거리일떄 멈춤
+                    else:
+                        buff_a = b'j'
+                        
+                self.client.publish(self.topic, buff_a)
+                print(f"Send payload : {buff_a}")
+                break
+                    
+            # 장애물이 있으면 obs_val == 1
+            else:
+                buff_a = b'j'
+                self.client.publish(self.topic, buff_a)
+                print(f"{buff_a} : WARNING. Obstacle come closing ")
+                
+                break
+
+    def box_create(self):
+        max_center = [0, 1000.0] # 임시변수 초기값 [초기id, 중앙에서 가장먼거리]                
+        for name, x, y in self.boxCent_list:
+            name_x= abs(320 - x)
+            name_y= abs(240 - y)
+            dist_fromCent = math.sqrt(name_x**2 + name_y**2) #중앙으로 부터의 거리
+            if max_center[1] > dist_fromCent:
+                max_center = name, dist_fromCent 
+        self.center_p = max_center[0] #id와 중앙부터거리 center_p[0],[1]에 저장
+        print(f"중앙에서 가장 가까운 객체 id:{max_center[0]}, 거리:{max_center[1]} ...")
+
+    def detect(self):
 
         out, source, yolo_weights, deep_sort_weights, show_vid, save_vid, save_txt, imgsz, evaluate = \
             self.opt.output, self.opt.source, self.opt.yolo_weights, self.opt.deep_sort_weights, self.opt.show_vid, self.opt.save_vid, \
@@ -206,8 +283,8 @@ class deep_sort(mqttClass):
         txt_file_name = source.split('/')[-1].split('.')[0]
         txt_path = str(Path(out)) + '/' + txt_file_name + '.txt'
 
-        fifo_end = time.time()
-        print(f"동영상 시작까지 걸린 시간 = {fifo_end - fifo_start}")
+        mqtt_end = time.time()
+        print(f"동영상 시작까지 걸린 시간 = {mqtt_end - self.mqtt_start}")
 
         # datsset.py로부터 class를 통해 영상들 받아오는곳
         for frame_idx, (path, img, im0s, vid_cap, depth_img, depth_im0s, depth_data) in enumerate(dataset):
@@ -324,6 +401,7 @@ class deep_sort(mqttClass):
                     # pass detections to deepsort
                     outputs = deepsort.update(xywhs.cpu(), confs.cpu(), clss.cpu(), im0)
                     
+                    self.boxCent_list = []
                     # 박스 하나당 draw boxes for visualization
                     if len(outputs) > 0:
                         for j, (output, conf) in enumerate(zip(outputs, confs)): 
@@ -385,7 +463,7 @@ class deep_sort(mqttClass):
                                     self.target_xval = ((start_left + end_left) / 2) / w
                                     # 타켓person의 거리를 fifo쓰레드로 전달 
                                     self.distance_val = int(target_distacne * 100)
-                                    print("{} : 타겟 person과의 거리 = {:.2f} cm".format(id, target_distacne * 100))
+                                    print(f"{id} : 타겟 person과의 거리 = {target_distacne * 100:.2f} cm")
 
                                 # 타겟외에 다른 person
                                 #else:
@@ -403,8 +481,8 @@ class deep_sort(mqttClass):
                         #     dist_fromCent = math.sqrt(name_x**2 + name_y**2) #중앙으로 부터의 거리
                         #     if max_center[1] > dist_fromCent:
                         #         max_center = name, dist_fromCent 
-                        # center_p = max_center[0] #id와 중앙부터거리 center_p[0],[1]에 저장
-                        # print("중앙에서 가장 가까운 객체id:{}, 거리:{} ".format(max_center[0],int(max_center[1])))
+                        # self.center_p = max_center[0] #id와 중앙부터거리 center_p[0],[1]에 저장
+                        # print(f"중앙에서 가장 가까운 객체 id : {max_center[0]}, 거리 : {max_center[1]:.5f}")
 
                         # 멀티 프로세스 x
                         self.box_create()
@@ -425,67 +503,7 @@ class deep_sort(mqttClass):
                 fps = 1/detect_time
                 print(f'{fps:.5f} fps')
                 
-                while True:
-                    if self.stopThread_flag == True: # 종료문
-                        buff_a = b'j'
-                        self.client.publish(self.topic, buff_a)
-                        print("Stop activate.")
-
-                        # os.write(fds_from_yolo, buff_a.encode())
-                        break
-
-                    # 장애물이 없으면.
-                    if self.obs_val == 0:
-                        # 타겟의 x좌표의 오른쪽에있고, 오른쪽으로 회전하기 위한값을 fifo로전달
-                        if self.target_xval > 0.9:
-                            buff_a = b'A'
-                            
-                        elif self.target_xval > 0.8:
-                            buff_a = b'B'
-                            
-                        elif self.target_xval > 0.7:
-                            buff_a = b'C'
-                            
-                        elif self.target_xval > 0.6:
-                            buff_a = b'D'
-                            
-                        # 타겟의 x좌표가 왼쪽에있고, 왼쪽으로 회전하기 위한값을 fifo로전달
-                        elif self.target_xval < 0.4:
-                            buff_a = b'E'
-                            
-                        elif self.target_xval < 0.3:
-                            buff_a = b'F'                   
-                            
-                        elif self.target_xval < 0.2:
-                            buff_a = b'G'               
-                            
-                        elif self.target_xval < 0.1:
-                            buff_a = b'H'
-                            
-                        # 타겟의 x좌표가 중앙 0.5에 있을때
-                        else:
-                            # 타겟과의 거리가 멀리있을때 전진
-                            if self.distance_val > 80.0:
-                                buff_a = b'c'
-
-                            # 타겟과의 거리가 가까이있을때 후진
-                            # elif distance_val < 0.5:
-                            #     buff_a = 'd'
-                            # 타겟과의 거리가 적당거리일떄 멈춤
-                            else:
-                                buff_a = b'j'
-                                
-                        self.client.publish(self.topic, buff_a)
-                        #print(f"Send payload : {buff_a}")
-                        break
-                            
-                    # 장애물이 있으면 obs_val == 1
-                    else:
-                        buff_a = b'j'
-                        self.client.publish(self.topic, buff_a)
-
-                        print(f"{buff_a} : WARNING. Obstacle come closing ")
-                        break
+                self.publisher()
                         
                 # 영상 저장 (image with detections)
                 if save_vid:
@@ -516,33 +534,19 @@ class deep_sort(mqttClass):
         #TPE.shutdown()
         self.client.disconnect()
         print('Done. (%.3fs)' % (time.time() - t0))
-        sys.exit()
-
-    def box_create(self):
-        max_center = [0, 1000.0] # 임시변수 초기값 [초기id, 중앙에서 가장먼거리]                
-        for name, x, y in self.boxCent_list:
-            name_x= abs(320 - x)
-            name_y= abs(240 - y)
-            dist_fromCent = math.sqrt(name_x**2 + name_y**2) #중앙으로 부터의 거리
-            if max_center[1] > dist_fromCent:
-                max_center = name, dist_fromCent 
-        self.center_p = max_center[0] #id와 중앙부터거리 center_p[0],[1]에 저장
-        print(f"중앙에서 가장 가까운 객체 id:{max_center[0]}, 거리:{max_center[1]} ...")
-                  
+        sys.exit()              
 
 if __name__ == '__main__':
 
-    fifo_start = time.time()
-    
     mqttDriver = mqttClass()
-    args = mqttDriver.cmd_argument()
-    deepSortStart = deep_sort(mqttDriver.client, mqttDriver.topic, args)
+    
+    deepSortStart = deepsortClass(mqttDriver.client, mqttDriver.topic, opt=mqttDriver.cmd_argument(), mqtt_start=time.time(), stopThread_flag=False)
 
     # 쓰레드 포함 -> 이 밑으로 멀티프로세스 생성 x.
     # loop_start()를 사용해야 아래 함수들 실행 가능.
     mqttDriver.run()
-    
-    with ThreadPoolExecutor(max_workers=2) as TPE:
+
+    with ThreadPoolExecutor(max_workers=4) as TPE:
         with torch.no_grad():
             TPE.submit(deepSortStart.detect)
 
