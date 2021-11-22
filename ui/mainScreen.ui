@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QPushButton" name="Nav_Btn">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>210</y>
+      <width>251</width>
+      <height>131</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>길 안내(Navigation)</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="F_Btn">
+    <property name="geometry">
+     <rect>
+      <x>290</x>
+      <y>210</y>
+      <width>231</width>
+      <height>131</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>추종(Following)</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="Voice_Btn">
+    <property name="geometry">
+     <rect>
+      <x>540</x>
+      <y>210</y>
+      <width>241</width>
+      <height>131</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>음성인식(Voice Recognition)</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>90</x>
+      <y>100</y>
+      <width>121</width>
+      <height>91</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">image: url(:/home/nvidia/python-GUI/img/navigation.png);</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap resource="../nav.qrc">:/home/nvidia/python-GUI/img/navigation.png</pixmap>
+    </property>
+    <property name="scaledContents">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>330</x>
+      <y>90</y>
+      <width>131</width>
+      <height>101</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">image: url(:/home/nvidia/python-GUI/img/following.png);</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap resource="../nav.qrc">:/home/nvidia/python-GUI/img/following.png</pixmap>
+    </property>
+    <property name="scaledContents">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>600</x>
+      <y>90</y>
+      <width>121</width>
+      <height>101</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">image: url(:/home/nvidia/python-GUI/img/mic.png);</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>24</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources>
+  <include location="../nav.qrc"/>
+  <include location="../voice.qrc"/>
+  <include location="../qrc/following.qrc"/>
+ </resources>
+ <connections/>
+</ui>

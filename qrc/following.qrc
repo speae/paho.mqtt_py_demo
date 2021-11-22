@@ -1,0 +1,5 @@
+<RCC>
+  <qresource prefix="~/python-GUI">
+    <file>img/following.png</file>
+  </qresource>
+</RCC>

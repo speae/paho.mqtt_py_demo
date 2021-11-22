@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QPushButton" name="Following_Action_Btn">
+    <property name="geometry">
+     <rect>
+      <x>210</x>
+      <y>120</y>
+      <width>371</width>
+      <height>281</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border-color: rgb(0, 0, 0);</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>340</x>
+      <y>70</y>
+      <width>111</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 20pt &quot;BM DoHyeon OTF&quot;;</string>
+    </property>
+    <property name="text">
+     <string>Following</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>330</x>
+      <y>150</y>
+      <width>121</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 15pt &quot;BM DoHyeon OTF&quot;;</string>
+    </property>
+    <property name="text">
+     <string>나를 따라 짐 운반</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="Following_Cancle_Btn">
+    <property name="geometry">
+     <rect>
+      <x>710</x>
+      <y>0</y>
+      <width>71</width>
+      <height>71</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 24pt &quot;.AppleSystemUIFont&quot;;</string>
+    </property>
+    <property name="text">
+     <string>⟲</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>60</x>
+      <y>30</y>
+      <width>101</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 24pt &quot;BM DoHyeon OTF&quot;;
+</string>
+    </property>
+    <property name="text">
+     <string>추종</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>24</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

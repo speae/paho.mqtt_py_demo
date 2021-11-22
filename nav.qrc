@@ -1,0 +1,5 @@
+<RCC>
+  <qresource prefix="/home/nvidia/python-GUI">
+    <file>img/navigation.png</file>
+  </qresource>
+</RCC>
