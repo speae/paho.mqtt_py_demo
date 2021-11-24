@@ -140,6 +140,9 @@
      </rect>
     </property>
     <property name="text">
+    <property name="styleSheet">
+     <string notr="true"/>
+    </property>
      <string/>
     </property>
    </widget>
@@ -150,14 +153,14 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>24</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <resources>
-  <include location="../../../../Desktop/mic.qrc"/>
+  <include location="../mic.qrc"/>
  </resources>
  <connections/>
 </ui>

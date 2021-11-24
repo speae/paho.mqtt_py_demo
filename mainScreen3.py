@@ -183,7 +183,7 @@ class Voice_WindowClass(QMainWindow, Voice_form_class):
         self.Voice_Cancle_Btn.clicked.connect(self.Voice_Cancle_Btn_Function)
         self.Voice_Action_Btn.clicked.connect(self.Voice_Action_Btn_Function)
         self.Voice_Action_Btn.setStyleSheet(
-            "image : url(/home/nvidia/python-GUI/img/mic.png);"
+            "image : url(/home/nvidia/paho.mqtt_py_demo/img/mic.png);"
             "image-position: center;")
 
     def Voice_Cancle_Btn_Function(self):

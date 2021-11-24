@@ -1,7 +1,25 @@
 import sys
-from paho_mqtt_pub_motor_test import on_message
 sys.path.insert(0, './yolov5')
 
+import argparse
+import os
+import platform
+import shutil
+import time
+import cv2
+import torch
+import torch.backends.cudnn as cudnn
+import random
+import signal
+import numpy as np
+import math
+import getopt
+import psutil
+from pathlib import Path
+from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
+
+import paho.mqtt.client as mqtt
+import pyrealsense2 as rs
 from yolov5.models.experimental import attempt_load
 from yolov5.utils.downloads import attempt_download
 from yolov5.utils.datasets import LoadImages, LoadStreams
@@ -10,26 +28,6 @@ from yolov5.utils.torch_utils import select_device, time_sync
 from yolov5.utils.plots import Annotator, colors
 from deep_sort_pytorch.utils.parser import get_config
 from deep_sort_pytorch.deep_sort import DeepSort
-import argparse
-import os
-import platform
-import shutil
-import time
-from pathlib import Path
-import cv2
-import torch
-import torch.backends.cudnn as cudnn
-
-import numpy as np
-import threading
-import pyrealsense2 as rs
-import math
-
-import random
-import os
-import paho.mqtt.client as mqtt
-
-from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
 
 # 쓰레드종료 알림 변수 (기본False, 종료요청True)
 # stopThread_flag = False
@@ -124,6 +122,18 @@ class deepsortClass(mqttClass):
         self.following_pers = 0 # 추적할 person타겟 초기화 
         self.boxCent_list = []
         
+        self.keyMap = {b'A' : 'turn right::▶▶▶▶',
+                        b'B' : 'turn right::▶▶▶',
+                        b'C' : 'turn right::▶▶',
+                        b'D' : 'turn right::▶',
+                        b'E' : '◀◀◀◀::turn left',
+                        b'F' : '◀◀◀::turn left',
+                        b'G' : '◀◀::turn left',
+                        b'H' : '◀::turn left',
+                        b'h' : '▲',
+                        b'k' : '▼',
+                        b'j' : '■STOP■'}
+
     # 물체의 좌우 끝 좌표를 받아 그 물체 의 거리값을 가져와주는 함수 
     def location_to_depth(self, grayimg, loc1, loc2, depth_data):
         if loc1[0] < loc2[0]:
@@ -187,15 +197,15 @@ class deepsortClass(mqttClass):
                     # 타겟과의 거리가 가까이있을때 후진
                     # elif distance_val < 0.5:
                     #     buff_a = 'd'
-                    elif 45.0 < self.distance_val <= 80.0:
-                        buff_a = b'k'
+                    # elif 60.0 < self.distance_val <= 80.0:
+                    #     buff_a = b'k'
 
                     # 타겟과의 거리가 적당거리일떄 멈춤
                     else:
                         buff_a = b'j'
                         
                 self.client.publish(self.topic, buff_a)
-                print(f"Send payload : {buff_a}")
+                print(f"Send payload : {buff_a} == {self.keyMap[buff_a]}")
                 break
                     
             # 장애물이 있으면 obs_val == 1
@@ -265,7 +275,8 @@ class deepsortClass(mqttClass):
         if webcam:
             cudnn.benchmark = True  # set True to speed up constant image size inference
             dataset = LoadStreams(source, img_size=imgsz, stride=stride)
-            # read class object with enum ,enumerate(class)
+            print(f"webcam:{webcam}, source:{source}, imgsz:{imgsz}, stride:{stride}")
+        # read class object with enum ,enumerate(class)
 
         else:
             dataset = LoadImages(source, img_size=imgsz, stride=stride)
@@ -288,7 +299,9 @@ class deepsortClass(mqttClass):
 
         # datsset.py로부터 class를 통해 영상들 받아오는곳
         for frame_idx, (path, img, im0s, vid_cap, depth_img, depth_im0s, depth_data) in enumerate(dataset):
-
+            # print(f"frame_idx:{frame_idx}, path:{path}, img:{img}, im0s:{im0s}, vid_cap:{vid_cap}, depth_img:{depth_img},\
+            #   depth_im0s:{depth_im0s}, depth_data:{depth_data}." )
+        
             #print("frame_idx:",frame_idx,"path:",path,"vid_cap",vid_cap)
             img = torch.from_numpy(img).to(device)
             img = img.half() if half else img.float()  # uint8 to fp16/32
@@ -363,7 +376,7 @@ class deepsortClass(mqttClass):
                         # 장애물하나당 거리값 구해오는 함수
                         obs_depth = self.location_to_depth(depth_grayimg, min_x, max_x, depth_data)
                         #print(obs_depth)
-                    # 최소 장애물과의 거리. 이에 아래값에 도달할경우 거리값전달 멈추기
+                        # 최소 장애물과의 거리. 이에 아래값에 도달할경우 거리값전달 멈추기
                         if obs_depth < 50.0:
                             close_Obs_flag = 1
 
@@ -496,7 +509,7 @@ class deepsortClass(mqttClass):
                 if show_vid:
                     cv2.imshow("deteciton", im0)
                     cv2.imshow("dm0", dm0)
-                    
+
                 detect_end = time.time()         
                 detect_time = detect_end - detect_start
                 detect_start = detect_end
@@ -504,7 +517,7 @@ class deepsortClass(mqttClass):
                 print(f'{fps:.5f} fps')
                 
                 self.publisher()
-                        
+                
                 # 영상 저장 (image with detections)
                 if save_vid:
                     if vid_path != save_path:  # new video
@@ -532,10 +545,9 @@ class deepsortClass(mqttClass):
         # 전체 작동시간fps
         self.stopThread_flag = True
         #TPE.shutdown()
-        self.client.disconnect()
+        self.client.publish(self.topic, b'j')
         print('Done. (%.3fs)' % (time.time() - t0))
-        sys.exit()              
-
+        
 if __name__ == '__main__':
 
     mqttDriver = mqttClass()
@@ -550,3 +562,5 @@ if __name__ == '__main__':
         with torch.no_grad():
             TPE.submit(deepSortStart.detect)
 
+    mqttDriver.client.loop_stop()
+    

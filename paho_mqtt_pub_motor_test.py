@@ -11,7 +11,7 @@ import paho.mqtt.client as mqtt
 # MQTT Value
 broker = 'broker.emqx.io'
 port = 1883
-topic = "python/depth"
+topic = "python/keyboard"
 
 client_id = f'python-mqtt-{random.randint(0, 100)}'
 username = 'emqx'
@@ -26,19 +26,20 @@ class MotorCon:
         print("-------------------------------------------------")
         print("                    MAIN MENU")
         print("-------------------------------------------------")
-        print(" 1. apple                                        ")
-        print(" 2. person(banana)                               ")
-        print(" 3. bicycle                                      ")
-        print(" 4. dog                                          ")
-        print(" 5. truck                                        ")
-
-        print(" a. Turn Left                                    ")
-        print(" b. Turn Right                                   ")
-        print(" c. Forward                                      ")
-        print(" d. backward                                     ")
-        print(" i. stop                                         ")
-        print(" I. speed up +10                                 ")
-        print(" D. speed down -10                               ")
+        print(" power volume : left 1 <<< 4 & right 4 >>> 1     ")
+        print("-------------------------------------------------")
+        
+        print(" A. Turn Left1                                   ")
+        print(" B. Turn Left2                                   ")
+        print(" C. Turn Left3                                   ")
+        print(" D. Turn Left4                                   ")
+        print(" E. Turn Right4                                  ")
+        print(" F. Turn Right3                                  ")
+        print(" G. Turn Right2                                  ")
+        print(" H. Turn Right1                                  ")
+        print(" h. Forward                                      ")
+        print(" k. Backward                                     ")
+        print(" j. stop                                         ")
 
         print("-------------------------------------------------")
         print(" q. Motor Control application QUIT               ")
@@ -82,7 +83,7 @@ if __name__ == '__main__':
             command = motorCon.mainMenu()
             if command == 'q':
                 print("quit command.")
-                #client.disconnect()
+                client.disconnect(reasoncode=0)
             
             # pub_chk = client.publish("mqtt/paho", command)
             pub_chk = client.publish(topic, command)

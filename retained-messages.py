@@ -79,7 +79,7 @@ def clear_retained(retained): #accepts single topic or list
                 client.publish(t[0],msg,qos=QOS0,retain=RETAIN)
                 print ("Clearing retaind on ",msg,"topic -",t[0]," qos=",QOS0," retain=",RETAIN)
         except:
-            Print("problems with topic")
+            print("problems with topic")
             return -1
     
 ##############
