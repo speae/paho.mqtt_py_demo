@@ -40,7 +40,7 @@ def kill_deepsort_pid():
                         
                     parent.kill()
 
-                elif "/home/nvidia/workspace/Yolov5_DeepSort_Pytorch/track.py" in commandLine:
+                elif "track.py" in commandLine:
                     parent_pid = processID
                     parent = psutil.Process(parent_pid)
 

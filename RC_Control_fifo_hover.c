@@ -172,150 +172,84 @@ int main( int argc, char **argv )
     {
         switch(key)
         {
-
-           case '1':
-               printf("No.1\n");
-               Buff[0] = 'A';
-               write( fd_to_yolo, Buff, 1 );
-               printf("%c send\n", Buff[0]);
-               printf("apple\n");
-               break;
-
-           case '2':
-               printf("No.2\n");
-               Buff[0] = 'B';
-               write( fd_to_yolo, Buff, 1 );
-               printf("%c send\n", Buff[0]);
-               printf("banana\n");
-               break;
-
-           case '3':
-               printf("No.3\n");
-               Buff[0] = 'C';
-               write( fd_to_yolo, Buff, 1 );
-               printf("%c send\n", Buff[0]);
-               printf("bicycle\n");
-               break;
-
-           case '4':
-               printf("No.4\n");
-               Buff[0] = 'D';
-               write( fd_to_yolo, Buff, 1 );
-               printf("%c send\n", Buff[0]);
-               printf("dog\n");
-               break;
-
-           case '5':
-               printf("No.5\n");
-               Buff[0] = 'E';
-               write( fd_to_yolo, Buff, 1 );
-               printf("%c send\n", Buff[0]);
-               printf("truck\n");
-               break;
-
-           case '6':
-               printf("No.6\n");
-               Buff[0] = 'F';
-               write( fd_to_yolo, Buff, 1 );
-               printf("%c send\n", Buff[0]);
-               break;
-
-           case '7':
-               printf("No.7\n");
-               Buff[0] = 'G';
-               write( fd_to_yolo, Buff, 1 );
-               printf("%c send\n", Buff[0]);
-               break;
-
-           case '8':
-               printf("No.8\n");
-               Buff[0] = 'H';
-               write( fd_to_yolo, Buff, 1 );
-               printf("%c send\n", Buff[0]);
-               break;
-
-           case '9':
-               printf("No.9\n");
-               Buff[0] = 'I';
-               write( fd_to_yolo, Buff, 1 );
-               printf("%c send\n", Buff[0]);
-               break;
-
-           case '0':
-               printf("No.0\n");
-               Buff[0] = 'J';
-               write( fd_to_yolo, Buff, 1 );
-               printf("%c send\n", Buff[0]);
-               break;
-
-           case 'a':
-               printf("a \n");               
-               Buff[0] = 'f';
-               write( handle, Buff, 1 );
-               break;
-
-           case 'b':
-               printf("b \n");               
-               Buff[0] = 'g';
-               write( handle, Buff, 1 );
-               break;
-
-           case 'c':
-               printf("c\n");               
-               //Buff[0] = 'c';
+            case 'h':
+               printf("h\n");               
+               //Buff[0] = 'i';
                Buff[0] = 'h';
                write( handle, Buff, 1 );
-               break;
+               break; 
 
-           case 'd':
-               printf("d\n");               
-               Buff[0] = 'i';
-               write( handle, Buff, 1 );
-               break;  
-
-           case 'i':
-               printf("i\n");               
+            case 'j':
+               printf("j\n");               
                //Buff[0] = 'i';
                Buff[0] = 'j';
                write( handle, Buff, 1 );
                break;  
 
-           case 'A':
+            case 'A':
                printf("A\n");
                Buff[0] = 'A';
                write( fd_to_yolo, Buff, 1 );
                printf("%c send\n", Buff[0]);
                break;
 
-	   case 'B':
+	        case 'B':
                printf("B\n");
                Buff[0] = 'B';
                write( fd_to_yolo, Buff, 1 );
                printf("%c send\n", Buff[0]);
                break;
 
-           case 'I':
-               printf("No.6\n");               
+            case 'C':
+               printf("C\n");               
                //Buff[0] = 'I';
-               Buff[0] = 'a';
+               Buff[0] = 'C';
                write( handle, Buff, 1 );
                break;  
 
-           case 'D':
-               printf("No.7\n");
+            case 'D':
+               printf("D\n");
                //Buff[0] = 'D';
-               Buff[0] = 'b';
+               Buff[0] = 'D';
                write( handle, Buff, 1 );
                break;  
 
-           case 'q':
-               printf("exit\n");
+            case 'E':
+               printf("E\n");
+               Buff[0] = 'E';
+               write( fd_to_yolo, Buff, 1 );
+               printf("%c send\n", Buff[0]);
+               break;
+
+	        case 'F':
+               printf("F\n");
+               Buff[0] = 'F';
+               write( fd_to_yolo, Buff, 1 );
+               printf("%c send\n", Buff[0]);
+               break;
+
+            case 'G':
+               printf("G\n");               
+               //Buff[0] = 'I';
+               Buff[0] = 'G';
+               write( handle, Buff, 1 );
+               break;  
+
+            case 'H':
+               printf("H\n");
+               //Buff[0] = 'D';
+               Buff[0] = 'H';
+               write( handle, Buff, 1 );
+               break;
+
+            case 'q':
+               printf("exit.\n");
                tcsetattr( handle, TCSANOW, &oldtio ); // 이전 상태로 되돌린다. 
                close( handle );   // 화일을 닫는다.               
                exit(0);
                break;
 
-           default :
+            default :
                printf("Wrong key ..... try again\n");
                break;
         }

@@ -15,6 +15,7 @@ from mqttPub import *
 broker = 'broker.emqx.io'
 port = 1883
 topic = "python/mqtt"
+topicOldVersion = "python/oldversion"
 topic_cancle = "python/cancle"
 
 # generate client ID with pub prefix randomly
@@ -52,9 +53,12 @@ def publish_Following_old(client):
 
     msg = "deepsort_on_old"
     result = client.publish(topic, msg, 0)
+    resultOld = client.publish(topicOldVersion, msg, 0)
+    
     # result: [0, 1]
     status = result[0]
-    if status == 0:
+    statusOld = resultOld[0]
+    if status == 0 and statusOld == 0:
         print(f"Send `{msg}` to topic `{topic}`")
     else:
         print(f"Failed to send message to topic {topic}")

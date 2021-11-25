@@ -29,8 +29,8 @@ def connect_mqtt() -> mqtt_client:
         elif str_msg == "deepsort_on_old":
             print(f"Received `{str_msg}` from `{msg.topic}` topic")
             print("deepsort ON... OLD version...........")
-            os.system("python3 /home/nvidia/workspace/Yolov5_DeepSort_Pytorch/track.py")
-
+            os.system("python3 track.py")
+            
         elif str_msg == "nav_on":
             print(f"Received `{str_msg}` from `{msg.topic}` topic")
             print("navigation ON...")
