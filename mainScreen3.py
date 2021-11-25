@@ -47,6 +47,18 @@ def publish_Following(client):
     else:
         print(f"Failed to send message to topic {topic}")
 
+def publish_Following_old(client):
+    time.sleep(1)
+
+    msg = "deepsort_on_old"
+    result = client.publish(topic, msg, 0)
+    # result: [0, 1]
+    status = result[0]
+    if status == 0:
+        print(f"Send `{msg}` to topic `{topic}`")
+    else:
+        print(f"Failed to send message to topic {topic}")
+
 def Following_Cancle(client):
     time.sleep(1)
 
@@ -158,17 +170,18 @@ class Nav_WindowClass(QMainWindow, Nav_form_class):
             "background-position : center;")
 
     def Nav_Window_Cancle_Btn_Function(self):
+
         self.M_window()
         client = connect_mqtt()
         Nav_Cancle(client)
         
-
     def Nav_Action_Btn_Function(self):
         
         client = connect_mqtt()
         publish_Nav(client)
 
     def M_window(self):
+
         self.m = WindowClass()
         self.m.show()
         self.hide()
@@ -182,7 +195,13 @@ class F_WindowClass(QMainWindow, F_form_class):
             self.Following_Cancle_Btn_Function)
         self.Following_Action_Btn.clicked.connect(
             self.Following_Action_Btn_Function)
+        self.Following_Action_Old_Btn.clicked.connect(
+            self.Following_Action_Old_Btn_Function)
+
         self.Following_Action_Btn.setStyleSheet(
+            "background-image : url(/home/nvidia/paho_mqtt_py_demo/img/man4.png);"
+            "background-position : center;")
+        self.Following_Action_Old_Btn.setStyleSheet(
             "background-image : url(/home/nvidia/paho_mqtt_py_demo/img/man4.png);"
             "background-position : center;")
 
@@ -203,6 +222,17 @@ class F_WindowClass(QMainWindow, F_form_class):
 
         # publish
         publish_Following(client)
+
+    def Following_Action_Old_Btn_Function(self):
+
+        # client defenition
+        # user setting
+        # on_connect
+        # connect
+        client = connect_mqtt()
+
+        # publish
+        publish_Following_old(client)
 
 class Voice_WindowClass(QMainWindow, Voice_form_class):
     def __init__(self):

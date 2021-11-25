@@ -2,7 +2,6 @@ import random
 import os
 
 from paho.mqtt import client as mqtt_client
-from roslaunch import rlutil, parent
 
 broker = 'broker.emqx.io'
 port = 1883
@@ -27,12 +26,16 @@ def connect_mqtt() -> mqtt_client:
             print("deepsort ON...")
             os.system("python3 paho_mqtt_pub_depth_to_motor_test.py")
 
+        elif str_msg == "deepsort_on_old":
+            print(f"Received `{str_msg}` from `{msg.topic}` topic")
+            print("deepsort ON... OLD version...........")
+            os.system("python3 /home/nvidia/workspace/Yolov5_DeepSort_Pytorch/track.py")
+
         elif str_msg == "nav_on":
             print(f"Received `{str_msg}` from `{msg.topic}` topic")
             print("navigation ON...")
             os.system("python3 paho_mqtt_pub_sub_lidar.py")
 
-            
     def on_connect(client, userdata, flags, rc):
         if rc == 0:                                                                                      
             print("Connected to MQTT Broker!")

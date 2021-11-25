@@ -17,8 +17,8 @@
    <widget class="QPushButton" name="Following_Action_Btn">
     <property name="geometry">
      <rect>
-      <x>210</x>
-      <y>120</y>
+      <x>20</x>
+      <y>140</y>
       <width>371</width>
       <height>281</height>
      </rect>
@@ -33,7 +33,7 @@
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>300</x>
+      <x>320</x>
       <y>70</y>
       <width>151</width>
       <height>41</height>
@@ -55,8 +55,8 @@
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
-      <x>300</x>
-      <y>150</y>
+      <x>120</x>
+      <y>180</y>
       <width>181</width>
       <height>31</height>
      </rect>
@@ -105,6 +105,41 @@
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="Following_Action_Old_Btn">
+    <property name="geometry">
+     <rect>
+      <x>410</x>
+      <y>140</y>
+      <width>371</width>
+      <height>281</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border-color: rgb(0, 0, 0);</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_4">
+    <property name="geometry">
+     <rect>
+      <x>460</x>
+      <y>180</y>
+      <width>301</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="contextMenuPolicy">
+     <enum>Qt::DefaultContextMenu</enum>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 15pt &quot;BM DoHyeon OTF&quot;;</string>
+    </property>
+    <property name="text">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;화물 운반해드립니다.(Non-MQTT)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
   </widget>
