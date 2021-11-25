@@ -1,8 +1,8 @@
 import random
 import os
-from paho.mqtt import client as mqtt_client
-import sys
 
+from paho.mqtt import client as mqtt_client
+from roslaunch import rlutil, parent
 
 broker = 'broker.emqx.io'
 port = 1883
@@ -12,7 +12,6 @@ topic = "python/mqtt"
 client_id = f'python-mqtt-{random.randint(0, 100)}'
 username = 'emqx'
 password = 'public'
-
 
 def connect_mqtt() -> mqtt_client:
     
@@ -25,9 +24,15 @@ def connect_mqtt() -> mqtt_client:
         
         if str_msg == "deepsort_on":
             print(f"Received `{str_msg}` from `{msg.topic}` topic")
-            print("deepsort ON..")
+            print("deepsort ON...")
             os.system("python3 paho_mqtt_pub_depth_to_motor_test.py")
 
+        elif str_msg == "nav_on":
+            print(f"Received `{str_msg}` from `{msg.topic}` topic")
+            print("navigation ON...")
+            os.system("python3 paho_mqtt_pub_sub_lidar.py")
+
+            
     def on_connect(client, userdata, flags, rc):
         if rc == 0:                                                                                      
             print("Connected to MQTT Broker!")
@@ -45,7 +50,6 @@ def connect_mqtt() -> mqtt_client:
 def run():
     client = connect_mqtt()
     client.loop_forever()
-
 
 if __name__ == '__main__':
     run()

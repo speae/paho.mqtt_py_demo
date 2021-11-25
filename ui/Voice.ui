@@ -139,10 +139,10 @@
       <height>281</height>
      </rect>
     </property>
-    <property name="text">
     <property name="styleSheet">
      <string notr="true"/>
     </property>
+    <property name="text">
      <string/>
     </property>
    </widget>

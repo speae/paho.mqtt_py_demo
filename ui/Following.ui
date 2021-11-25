@@ -33,9 +33,9 @@
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>340</x>
+      <x>300</x>
       <y>70</y>
-      <width>111</width>
+      <width>151</width>
       <height>41</height>
      </rect>
     </property>
@@ -45,21 +45,30 @@
     <property name="text">
      <string>Following</string>
     </property>
+    <property name="textFormat">
+     <enum>Qt::AutoText</enum>
+    </property>
+    <property name="wordWrap">
+     <bool>false</bool>
+    </property>
    </widget>
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
-      <x>330</x>
+      <x>300</x>
       <y>150</y>
-      <width>121</width>
+      <width>181</width>
       <height>31</height>
      </rect>
+    </property>
+    <property name="contextMenuPolicy">
+     <enum>Qt::DefaultContextMenu</enum>
     </property>
     <property name="styleSheet">
      <string notr="true">font: 15pt &quot;BM DoHyeon OTF&quot;;</string>
     </property>
     <property name="text">
-     <string>나를 따라 짐 운반</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;화물 운반해드립니다.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
    <widget class="QPushButton" name="Following_Cancle_Btn">
@@ -105,7 +114,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>24</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>

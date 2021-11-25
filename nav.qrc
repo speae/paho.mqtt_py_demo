@@ -1,5 +1,5 @@
 <RCC>
-  <qresource prefix="/home/nvidia/python-GUI">
+  <qresource prefix="/home/nvidia/paho_mqtt_py_demo">
     <file>img/navigation.png</file>
   </qresource>
 </RCC>

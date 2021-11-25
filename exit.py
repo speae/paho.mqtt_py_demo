@@ -2,7 +2,11 @@ import random
 import os
 import sys
 import psutil
+import subprocess 
+import signal
 
+import rospy
+from roslaunch import rlutil, parent
 from paho.mqtt import client as mqtt_client
 
 
@@ -10,6 +14,7 @@ broker = 'broker.emqx.io'
 port = 1883
 topic_cancle = "python/cancle"
 topicStop = "python/motorStop"
+lidarStop = "python/lidarStop"
 
 # generate client ID with pub prefix randomly
 client_id = f'python-mqtt-{random.randint(0, 100)}'
@@ -34,7 +39,7 @@ def kill_deepsort_pid():
                         child.kill()
                         
                     parent.kill()
-                                    
+
                 else:
                     print(processName, ' ', commandLine, ' - ', processID)
         
@@ -45,6 +50,7 @@ def kill_deepsort_pid():
 def connect_mqtt() -> mqtt_client:
 
     def on_message(client, userdata, msg):
+        
         str_msg = str(msg.payload.decode("utf-8"))
         #print(type(msg))
         if msg.retain:
@@ -53,16 +59,25 @@ def connect_mqtt() -> mqtt_client:
         
         if str_msg == "deepsort_off":
             print(f"Quit received `{str_msg}` from `{msg.topic}` topic")
+            
             client.publish(topicStop, b'j')
             print("motor STOP...")
-            
+
             kill_deepsort_pid()
             print("deepsort OFF..")
             
+        elif str_msg == "nav_off":
+            print(f"Quit received `{str_msg}` from `{msg.topic}` topic")
+           
+            client.publish(lidarStop, str_msg)
+            print("navigation OFF..")
+
     def on_connect(client, userdata, flags, rc):
+        
         if rc == 0:
             print("Connected to MQTT Broker!")
             client.subscribe(topic_cancle)
+            
         else:
             print("Failed to connect, return code %d\n", rc)
 

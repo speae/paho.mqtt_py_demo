@@ -63,13 +63,13 @@
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">image: url(:/home/nvidia/python-GUI/img/navigation.png);</string>
+     <string notr="true">image: url(:/home/nvidia/paho_mqtt_py_demo/img/navigation.png);</string>
     </property>
     <property name="text">
      <string/>
     </property>
     <property name="pixmap">
-     <pixmap resource="/home/nvidia/paho.mqtt_py_demo/nav.qrc">:/home/nvidia/python-GUI/img/navigation.png</pixmap>
+     <pixmap resource="/home/nvidia/paho_mqtt_py_demo/nav.qrc">:/home/nvidia/paho_mqtt_py_demo/img/navigation.png</pixmap>
     </property>
     <property name="scaledContents">
      <bool>true</bool>
@@ -85,13 +85,13 @@
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">image: url(:/home/nvidia/python-GUI/img/following.png);</string>
+     <string notr="true">image: url(:/home/nvidia/paho_mqtt_py_demo/img/following.png);</string>
     </property>
     <property name="text">
      <string/>
     </property>
     <property name="pixmap">
-     <pixmap resource="/home/nvidia/paho.mqtt_py_demo/nav.qrc">:/home/nvidia/python-GUI/img/following.png</pixmap>
+     <pixmap resource="/home/nvidia/paho_mqtt_py_demo/following.qrc">:/home/nvidia/paho_mqtt_py_demo/img/following.png</pixmap>
     </property>
     <property name="scaledContents">
      <bool>true</bool>
@@ -107,13 +107,13 @@
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">image: url(:/home/nvidia/python-GUI/img/mic.png);</string>
+     <string notr="true">image: url(:/home/nvidia/paho_mqtt_py_demo/img/mic.png);</string>
     </property>
     <property name="text">
      <string/>
     </property>
     <property name="pixmap">
-     <pixmap resource="/home/nvidia/python-GUI/voice.qrc">:/home/png/nvidia-python/GUI/img.mic</pixmap>
+     <pixmap resource="/home/nvidia/paho_mqtt_py_demo/voice.qrc">:/home/nvidia/paho_mqtt_py_demo/img/mic.png</pixmap>
     </property>
     <property name="scaledContents">
      <bool>true</bool>
@@ -133,9 +133,9 @@
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <resources>
-  <include location="/home/nvidia/paho.mqtt_py_demo/nav.qrc"/>
-  <include location="/home/nvidia/paho.mqtt_py_demo/voice.qrc"/>
-  <include location="/home/nvidia/paho.mqtt_py_demo/qrc/following.qrc"/>
+  <include location="/home/nvidia/paho_mqtt_py_demo/nav.qrc"/>
+  <include location="/home/nvidia/paho_mqtt_py_demo/voice.qrc"/>
+  <include location="/home/nvidia/paho_mqtt_py_demo/following.qrc"/>
  </resources>
  <connections/>
 </ui>

@@ -1,4 +1,5 @@
 import sys
+import os
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
 from PyQt5.QtGui import QPixmap, QFont, QFontDatabase
@@ -21,7 +22,6 @@ client_id = f'python-mqtt-{random.randint(0, 1000)}'
 username = 'emqx'
 password = 'public'
 
-
 def connect_mqtt():
     def on_connect(client, userdata, flags, rc):
         if rc == 0:
@@ -37,6 +37,7 @@ def connect_mqtt():
 
 def publish_Following(client):
     time.sleep(1)
+    
     msg = "deepsort_on"
     result = client.publish(topic, msg, 0)
     # result: [0, 1]
@@ -46,10 +47,10 @@ def publish_Following(client):
     else:
         print(f"Failed to send message to topic {topic}")
 
-def publish_Cancle(client):
+def Following_Cancle(client):
     time.sleep(1)
-    msg = "deepsort_off"
 
+    msg = "deepsort_off"
     result = client.publish(topic_cancle, msg, 0)
     # result: [0, 1]
     status = result[0]
@@ -58,10 +59,29 @@ def publish_Cancle(client):
     else:
         print(f"Failed to send message to topic {topic}")
 
-# def run():
-#     client = connect_mqtt()
-#     publish_Following(client)
-#     publish_Cancle(client)
+def publish_Nav(client):
+    time.sleep(1)
+    
+    msg = "nav_on"
+    result = client.publish(topic, msg, 0)
+    # result: [0, 1]
+    status = result[0]
+    if status == 0:
+        print(f"Send `{msg}` to topic `{topic}`")
+    else:
+        print(f"Failed to send message to topic {topic}")
+
+def Nav_Cancle(client):
+    time.sleep(1)
+    
+    msg = "nav_off"
+    result = client.publish(topic_cancle, msg, 0)
+    # result: [0, 1]
+    status = result[0]
+    if status == 0:
+        print(f"Send `{msg}` to topic `{topic_cancle}`")
+    else:
+        print(f"Failed to send message to topic {topic}")
 
 ###############################################################################
 # PyQt Setting
@@ -70,19 +90,19 @@ def publish_Cancle(client):
 
 # main screen design
 Main_form_class = uic.loadUiType(
-    "/home/nvidia/python-GUI/ui/mainScreen.ui")[0]
+    "/home/nvidia/paho_mqtt_py_demo/ui/mainScreen.ui")[0]
 
 # main screen design
 Nav_form_class = uic.loadUiType(
-    "/home/nvidia/python-GUI/ui/Nav.ui")[0]
+    "/home/nvidia/paho_mqtt_py_demo/ui/Nav.ui")[0]
 
 # following screen design
 F_form_class = uic.loadUiType(
-    "/home/nvidia/python-GUI/ui/Following.ui")[0]
+    "/home/nvidia/paho_mqtt_py_demo/ui/Following.ui")[0]
 
 # following screen design
 Voice_form_class = uic.loadUiType(
-    "/home/nvidia/python-GUI/ui/Voice.ui")[0]
+    "/home/nvidia/paho_mqtt_py_demo/ui/Voice.ui")[0]
 
 # 화면을 띄우는데 사용되는 Class 선언
 
@@ -131,10 +151,22 @@ class Nav_WindowClass(QMainWindow, Nav_form_class):
         self.setupUi(self)
         self.Nav_Window_Cancle_Btn.clicked.connect(
             self.Nav_Window_Cancle_Btn_Function)
+        self.Nav_Action_Btn.clicked.connect(
+            self.Nav_Action_Btn_Function)
+        self.Nav_Action_Btn.setStyleSheet(
+            "background-image : url(/home/nvidia/paho_mqtt_py_demo/img/map.png);"
+            "background-position : center;")
 
     def Nav_Window_Cancle_Btn_Function(self):
-        print("Nav_Window_Cancle_Btn Clicked (Nav_Window_Cancle_Btn Clicked!)")
         self.M_window()
+        client = connect_mqtt()
+        Nav_Cancle(client)
+        
+
+    def Nav_Action_Btn_Function(self):
+        
+        client = connect_mqtt()
+        publish_Nav(client)
 
     def M_window(self):
         self.m = WindowClass()
@@ -151,7 +183,7 @@ class F_WindowClass(QMainWindow, F_form_class):
         self.Following_Action_Btn.clicked.connect(
             self.Following_Action_Btn_Function)
         self.Following_Action_Btn.setStyleSheet(
-            "background-image : url(/home/nvidia/python-GUI/img/man4.png);"
+            "background-image : url(/home/nvidia/paho_mqtt_py_demo/img/man4.png);"
             "background-position : center;")
 
     def Following_Cancle_Btn_Function(self):
@@ -159,7 +191,7 @@ class F_WindowClass(QMainWindow, F_form_class):
         self.m.show()
         self.hide()
         client = connect_mqtt()
-        publish_Cancle(client)
+        Following_Cancle(client)
 
     def Following_Action_Btn_Function(self):
 
@@ -172,10 +204,6 @@ class F_WindowClass(QMainWindow, F_form_class):
         # publish
         publish_Following(client)
 
-        # mqttPub.py
-        # run()
-
-
 class Voice_WindowClass(QMainWindow, Voice_form_class):
     def __init__(self):
         super().__init__()
@@ -183,7 +211,7 @@ class Voice_WindowClass(QMainWindow, Voice_form_class):
         self.Voice_Cancle_Btn.clicked.connect(self.Voice_Cancle_Btn_Function)
         self.Voice_Action_Btn.clicked.connect(self.Voice_Action_Btn_Function)
         self.Voice_Action_Btn.setStyleSheet(
-            "image : url(/home/nvidia/paho.mqtt_py_demo/img/mic.png);"
+            "image : url(/home/nvidia/paho_mqtt_py_demo/img/mic.png);"
             "image-position: center;")
 
     def Voice_Cancle_Btn_Function(self):
@@ -200,3 +228,4 @@ if __name__ == "__main__":
     myWindow = WindowClass()
     myWindow.show()
     app.exec_()
+    

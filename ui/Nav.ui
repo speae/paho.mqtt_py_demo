@@ -49,17 +49,23 @@
    <widget class="QLabel" name="label_3">
     <property name="geometry">
      <rect>
-      <x>290</x>
-      <y>420</y>
+      <x>200</x>
+      <y>430</y>
       <width>411</width>
       <height>101</height>
      </rect>
+    </property>
+    <property name="layoutDirection">
+     <enum>Qt::LeftToRight</enum>
     </property>
     <property name="styleSheet">
      <string notr="true">font: 26pt &quot;BM DoHyeon OTF&quot;;</string>
     </property>
     <property name="text">
      <string>클릭한 위치로 이동</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
     </property>
    </widget>
    <widget class="QPushButton" name="Nav_Window_Cancle_Btn">
@@ -78,26 +84,20 @@
      <string>⟲</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_4">
+   <widget class="QPushButton" name="Nav_Action_Btn">
     <property name="geometry">
      <rect>
-      <x>150</x>
+      <x>200</x>
       <y>110</y>
-      <width>501</width>
+      <width>401</width>
       <height>301</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">image: url(:/home/nvidia/python-GUI/img/map.png);</string>
+     <string notr="true">image: url(:/home/nvidia/paho_mqtt_py_demo/img/map.png);</string>
     </property>
     <property name="text">
-     <string/>
-    </property>
-    <property name="pixmap">
-     <pixmap>:/newPrefix/img/map.png</pixmap>
-    </property>
-    <property name="scaledContents">
-     <bool>true</bool>
+     <string>PushButton</string>
     </property>
    </widget>
   </widget>
@@ -107,7 +107,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>24</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>
