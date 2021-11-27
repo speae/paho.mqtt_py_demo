@@ -1,14 +1,20 @@
 import sys
 import os
+import random
+import time
+
+#import rviz
+
+from paho.mqtt import client as mqtt_client
+from mqttPub import *
+
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
 from PyQt5.QtGui import QPixmap, QFont, QFontDatabase
 from PyQt5.QtCore import Qt
 
-import random
-import time
-from paho.mqtt import client as mqtt_client
-from mqttPub import *
+from sensor_msgs.msg import JointState
+from geometry_msgs.msg import PoseWithCovarianceStamped
 
 ###############################################################################
 # MQTT Setting
@@ -99,6 +105,30 @@ def Nav_Cancle(client):
     else:
         print(f"Failed to send message to topic {topic}")
 
+def publish_Mapping(client):
+    time.sleep(1)
+    
+    msg = "map_on"
+    result = client.publish(topic, msg, 0)
+    # result: [0, 1]
+    status = result[0]
+    if status == 0:
+        print(f"Send `{msg}` to topic `{topic}`")
+    else:
+        print(f"Failed to send message to topic {topic}")
+
+def Mapping_Cancle(client):
+    time.sleep(1)
+    
+    msg = "map_off"
+    result = client.publish(topic_cancle, msg, 0)
+    # result: [0, 1]
+    status = result[0]
+    if status == 0:
+        print(f"Send `{msg}` to topic `{topic_cancle}`")
+    else:
+        print(f"Failed to send message to topic {topic}")
+
 ###############################################################################
 # PyQt Setting
 
@@ -120,9 +150,10 @@ F_form_class = uic.loadUiType(
 Voice_form_class = uic.loadUiType(
     "/home/nvidia/paho_mqtt_py_demo/ui/Voice.ui")[0]
 
+Map_form_class = uic.loadUiType(
+    "/home/nvidia/paho_mqtt_py_demo/ui/Mapcreator.ui")[0]
+
 # 화면을 띄우는데 사용되는 Class 선언
-
-
 class WindowClass(QMainWindow, Main_form_class):
     def __init__(self):
         super().__init__()
@@ -160,6 +191,55 @@ class WindowClass(QMainWindow, Main_form_class):
         self.v.show()
         self.hide()
 
+# class Map_WindowClass(QMainWindow, Map_form_class):
+#     def __init__(self):
+#         super().__init__()
+
+#         self.setupUi(self)
+
+#         self.frame = rviz.VisualizationFrame()
+#         self.frame.setSplashPath( "" )
+#         self.frame.initialize()
+#         reader = rviz.YamlConfigReader()
+#         config = rviz.Config()
+#         reader.readFile( config, "/home/nvidia/catkin_ws/src/RPLidar_Hector_SLAM/hector_slam/hector_slam_launch/rviz_cfg/mapping_demo.rviz" )
+#         self.frame.load( config )
+
+#         self.setWindowTitle( config.mapGetChild( "Title" ).getValue() )
+#         self.frame.setMenuBar( None )
+#         self.frame.setStatusBar( None )
+#         self.frame.setHideButtonVisibility( False )
+#         self.manager = self.frame.getManager()
+#         self.grid_display = self.manager.getRootDisplayGroup().getDisplayAt( 0 )
+
+#         layout = QGridLayout()
+#         layout.addWidget(self.frame)
+#         self.setLayout(layout)
+
+#         self.Map_Create_Cancle_Btn.clicked.connect(
+#             self.Map_Create_Cancle_Btn_Function
+#         )
+#         self.Map_Create_Start_Btn.clicked.connect(
+#             self.Map_Create_start_Btn_Function
+#         )
+
+#     def Map_Create_Cancle_Btn_Function(self):
+
+#         self.M_window()
+#         client = connect_mqtt()
+#         Mapping_Cancle(client)
+        
+#     def Map_Create_start_Btn_Function(self):
+        
+#         client = connect_mqtt()
+#         publish_Mapping(client)
+
+#     def M_window(self):
+
+#         self.m = WindowClass()
+#         self.m.show()
+#         self.hide()
+
 
 class Nav_WindowClass(QMainWindow, Nav_form_class):
     def __init__(self):
@@ -175,20 +255,26 @@ class Nav_WindowClass(QMainWindow, Nav_form_class):
 
     def Nav_Window_Cancle_Btn_Function(self):
 
-        self.M_window()
+        self.Map_window()
         client = connect_mqtt()
         Nav_Cancle(client)
         
     def Nav_Action_Btn_Function(self):
         
+        #self.M_window()
         client = connect_mqtt()
         publish_Nav(client)
 
-    def M_window(self):
+    # def Map_window(self):
+    #     self.n = Map_WindowClass()
+    #     self.n.show()
+    #     self.hide()
 
-        self.m = WindowClass()
-        self.m.show()
-        self.hide()
+    # def M_window(self):
+
+    #     self.m = WindowClass()
+    #     self.m.show()
+    #     self.hide()
 
 
 class F_WindowClass(QMainWindow, F_form_class):
