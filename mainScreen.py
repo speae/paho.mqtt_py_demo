@@ -58,12 +58,10 @@ def publish_Following_old(client):
 
     msg = "deepsort_on_old"
     result = client.publish(topic, msg, 0)
-    resultOld = client.publish(topicOldVersion, msg, 0)
     
     # result: [0, 1]
     status = result[0]
-    statusOld = resultOld[0]
-    if status == 0 and statusOld == 0:
+    if status == 0:
         print(f"Send `{msg}` to topic `{topic}`")
     else:
         print(f"Failed to send message to topic {topic}")
@@ -251,7 +249,7 @@ class F_WindowClass(QMainWindow, F_form_class):
             self.Following_Action_Btn_Function)
         self.Following_Action_Old_Btn.clicked.connect(
             self.Following_Action_Old_Btn_Function)
-
+            
         self.Following_Action_Btn.setStyleSheet(
             "background-image : url(/home/nvidia/paho_mqtt_py_demo/img/man4.png);"
             "background-position : center;")

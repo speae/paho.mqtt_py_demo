@@ -6,7 +6,6 @@ from paho.mqtt import client as mqtt_client
 broker = 'broker.emqx.io'
 port = 1883
 topic = "python/mqtt"
-lidarStart = "python/lidarStart"
 
 # generate client ID with pub prefix randomly
 client_id = f'python-mqtt-{random.randint(0, 100)}'
@@ -30,8 +29,8 @@ def connect_mqtt() -> mqtt_client:
         elif str_msg == "deepsort_on_old":
             print(f"Received `{str_msg}` from `{msg.topic}` topic")
             print("deepsort ON... OLD version...........")
-            os.system("python3 track.py")
-            
+            os.system("python3 track_tLose.py")
+
         elif str_msg == "nav_on":
             print(f"Received `{str_msg}` from `{msg.topic}` topic")
             print("navigation ON...")

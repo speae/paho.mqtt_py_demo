@@ -10,8 +10,6 @@ password = 'public'
 
 broker = 'broker.emqx.io'
 port = 1883
-topic = "python/mqtt"
-lidarStart = "python/lidarStart"
 lidarStop = "python/lidarStop"
 
 uuid = rlutil.get_or_generate_uuid(None, False)
@@ -30,7 +28,7 @@ def connect_mqtt() -> mqtt_client:
         #print(type(msg))
         if msg.retain:
             print("still alive message.")
-            os.system(f"python3 retained-messages.py -b {broker} -u {username} -P{password} -t{topic} -p{port} -c")
+            os.system(f"python3 retained-messages.py -b {broker} -u {username} -P{password} -t{lidarStop} -p{port} -c")
         
         if str_msg == "nav_off":
             print(f"Received `{str_msg}` from `{msg.topic}` topic")

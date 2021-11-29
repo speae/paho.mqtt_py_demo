@@ -32,8 +32,8 @@ class MotorCon():
                         b'j' : 'stop'}
         
         self.serialPort = serial.Serial(
-            #port="/dev/ttyUSB0",
-            port="/dev/ttyUSB1",
+            port="/dev/ttyUSB0",
+            #port="/dev/ttyUSB1",
             baudrate=115200,
             bytesize=serial.EIGHTBITS,
             parity=serial.PARITY_NONE,

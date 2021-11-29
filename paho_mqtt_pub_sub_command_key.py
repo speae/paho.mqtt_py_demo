@@ -48,55 +48,51 @@ class Keyboard_WindowClass(mainScreen.QMainWindow):
     def keyPressEvent(self, e): 
         
         client = self.connect_mqtt()
-        inputKey = []
-        if e.modifiers() & mainScreen.Qt.ShiftModifier: 
-            inputKey.append(e.text())
-            print(inputKey)
         
         if e.text() == chr(65) or e.text() == chr(97): 
-            self.resultLabel.setText(e.text())
             client.publish(topicKeyboard, b'A')
-
+            self.resultLabel.setText("turn right:: ▶▶▶▶")
+            
         elif e.text() == chr(66) or e.text() == chr(98): 
-            self.resultLabel.setText(e.text())
             client.publish(topicKeyboard, b'B')
-
+            self.resultLabel.setText("turn right:: ▶▶▶")
+            
         elif e.text() == chr(67) or e.text() == chr(99): 
-            self.resultLabel.setText(e.text())
             client.publish(topicKeyboard, b'C')
-        
+            self.resultLabel.setText("turn right:: ▶▶")
+            
         elif e.text() == chr(68) or e.text() == chr(100): 
-            self.resultLabel.setText(e.text())
             client.publish(topicKeyboard, b'D')
-        
+            self.resultLabel.setText("turn right:: ▶")
+            
         elif e.text() == chr(69) or e.text() == chr(101): 
-            self.resultLabel.setText(e.text())
             client.publish(topicKeyboard, b'E')
-        
+            self.resultLabel.setText("turn left:: ◀")
+            
         elif e.text() == chr(70) or e.text() == chr(102): 
-            self.resultLabel.setText(e.text())
             client.publish(topicKeyboard, b'F')
-
+            self.resultLabel.setText("turn left:: ◀◀")
+            
         elif e.text() == chr(71) or e.text() == chr(103): 
-            self.resultLabel.setText(e.text())
             client.publish(topicKeyboard, b'G')
-        
+            self.resultLabel.setText("turn left:: ◀◀◀")
+            
         elif e.text() == chr(72) or e.text() == chr(104): 
-            self.resultLabel.setText(e.text())
             client.publish(topicKeyboard, b'H')
-
+            self.resultLabel.setText("turn left:: ◀◀◀◀")
+            
         elif e.text() == chr(105): 
-            self.resultLabel.setText(e.text())
             client.publish(topicKeyboard, b'i')
-
+            self.resultLabel.setText("▲")
+            
         elif e.text() == chr(107): 
-            self.resultLabel.setText(e.text())
             client.publish(topicKeyboard, b'k')
-
+            self.resultLabel.setText("▼")
+            
         elif e.text() == chr(106): 
-            self.resultLabel.setText(e.text())
             client.publish(topicKeyboard, b'j')
-             
+            self.resultLabel.setText("■ STOP ■'")
+            
         else:
             print("retry.")    
 

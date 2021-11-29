@@ -4,6 +4,7 @@ import sys
 import psutil
 import subprocess 
 import signal
+import serial
 
 import rospy
 from roslaunch import rlutil, parent
@@ -40,7 +41,7 @@ def kill_deepsort_pid():
                         
                     parent.kill()
 
-                elif "track.py" in commandLine:
+                elif "track_tLose.py" in commandLine:
                     parent_pid = processID
                     parent = psutil.Process(parent_pid)
 
@@ -69,6 +70,20 @@ def connect_mqtt() -> mqtt_client:
         if str_msg == "deepsort_off":
             print(f"Quit received `{str_msg}` from `{msg.topic}` topic")
             
+            serialPort = serial.Serial(
+                port="/dev/ttyUSB0",
+                #port="/dev/ttyUSB0",
+                baudrate=115200,
+                bytesize=serial.EIGHTBITS,
+                parity=serial.PARITY_NONE,
+                stopbits=serial.STOPBITS_ONE
+            )   
+
+            i = 0
+            while i < 20: 
+                serialPort.write(b'j')
+                i += 1
+
             client.publish(topicStop, b'j')
             print("motor STOP...")
 
