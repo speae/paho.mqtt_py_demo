@@ -9,6 +9,8 @@ from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
 
 import paho.mqtt.client as mqtt
 
+# == ./RC_Control_fifo
+
 # Motor Control Function
 class MotorCon():
 
@@ -25,8 +27,8 @@ class MotorCon():
                         b'F' : 'turn right::3',
                         b'G' : 'turn right::2',
                         b'H' : 'turn right::1',
-                        b'h' : 'forward',
-                        b'k' : 'back',
+                        b'i' : 'forward',
+                        b'k' : 'backward',
                         b'j' : 'stop'}
         
         self.serialPort = serial.Serial(
@@ -71,6 +73,7 @@ class mqttClass(MotorCon):
         # self.topic = "python/keyboard"
         self.topic = "python/depth"
         self.topicStop = "python/motorStop"
+        self.topicKeyboard = "python/keyboardControll"
 
     def connect_mqtt(self) -> mqtt:
         def on_log(server, obj, level, string):
@@ -119,7 +122,8 @@ class mqttClass(MotorCon):
                 print("server has subscribed.")
                 server.subscribe(self.topic)
                 server.subscribe(self.topicStop)
-                
+                server.subscribe(self.topicKeyboard)
+
             else:
                 print("connect failed.")
                 server.disconnect(reasoncode=0)    

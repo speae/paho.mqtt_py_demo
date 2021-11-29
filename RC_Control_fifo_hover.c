@@ -51,18 +51,18 @@ void *t_function(void *data)
     {
         while(read(fd_from_yolo, buff, BUFF_SIZE) != 0)
         {
-            if(buff[0] == 'a')
-                Buff[0] = 'f';
-            else if(buff[0] == 'b')
-                Buff[0] = 'g';
-            else if(buff[0] == 'c')
-                Buff[0] = 'h';
-            else if(buff[0] == 'd')
-                Buff[0] = 'i';
-            else if(buff[0] == 'i')
-                Buff[0] = 'j';
-            else
-                Buff[0] = buff[0];
+            // if(buff[0] == 'a')
+            //     Buff[0] = 'f';
+            // else if(buff[0] == 'b')
+            //     Buff[0] = 'g';
+            // else if(buff[0] == 'c')
+            //     Buff[0] = 'h';
+            // else if(buff[0] == 'd')
+            //     Buff[0] = 'i';
+            // else if(buff[0] == 'i')
+            //     Buff[0] = 'j';
+            // else
+            Buff[0] = buff[0];
             write( handle, Buff, 1 );
             printf("%s", buff);
             memset(buff, 0x00, BUFF_SIZE);
@@ -172,10 +172,10 @@ int main( int argc, char **argv )
     {
         switch(key)
         {
-            case 'h':
-               printf("h\n");               
+            case 'i':
+               printf("i\n");               
                //Buff[0] = 'i';
-               Buff[0] = 'h';
+               Buff[0] = 'i';
                write( handle, Buff, 1 );
                break; 
 

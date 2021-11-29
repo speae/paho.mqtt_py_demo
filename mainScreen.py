@@ -2,9 +2,6 @@ import sys
 import os
 import random
 import time
-
-#import rviz
-
 from paho.mqtt import client as mqtt_client
 from mqttPub import *
 
@@ -13,16 +10,18 @@ from PyQt5 import uic
 from PyQt5.QtGui import QPixmap, QFont, QFontDatabase
 from PyQt5.QtCore import Qt
 
-from sensor_msgs.msg import JointState
-from geometry_msgs.msg import PoseWithCovarianceStamped
+import paho_mqtt_pub_sub_command_key
 
 ###############################################################################
 # MQTT Setting
+cmd = paho_mqtt_pub_sub_command_key
+
 broker = 'broker.emqx.io'
 port = 1883
 topic = "python/mqtt"
 topicOldVersion = "python/oldversion"
 topic_cancle = "python/cancle"
+topicKeyboard = "python/keyboardControll"
 
 # generate client ID with pub prefix randomly
 client_id = f'python-mqtt-{random.randint(0, 1000)}'
@@ -93,22 +92,10 @@ def publish_Nav(client):
     else:
         print(f"Failed to send message to topic {topic}")
 
-def Nav_Cancle(client):
+def publish_Map(client):
     time.sleep(1)
     
-    msg = "nav_off"
-    result = client.publish(topic_cancle, msg, 0)
-    # result: [0, 1]
-    status = result[0]
-    if status == 0:
-        print(f"Send `{msg}` to topic `{topic_cancle}`")
-    else:
-        print(f"Failed to send message to topic {topic}")
-
-def publish_Mapping(client):
-    time.sleep(1)
-    
-    msg = "map_on"
+    msg = "map_save_on"
     result = client.publish(topic, msg, 0)
     # result: [0, 1]
     status = result[0]
@@ -117,10 +104,22 @@ def publish_Mapping(client):
     else:
         print(f"Failed to send message to topic {topic}")
 
-def Mapping_Cancle(client):
+def publish_Command_Start(client):
     time.sleep(1)
     
-    msg = "map_off"
+    msg = "cmd_on"
+    result = client.publish(topicKeyboard, msg, 0)
+    # result: [0, 1]
+    status = result[0]
+    if status == 0:
+        print(f"Send `{msg}` to topic `{topic}`")
+    else:
+        print(f"Failed to send message to topic {topic}")
+        
+def Nav_Cancle(client):
+    time.sleep(1)
+    
+    msg = "nav_off"
     result = client.publish(topic_cancle, msg, 0)
     # result: [0, 1]
     status = result[0]
@@ -149,9 +148,6 @@ F_form_class = uic.loadUiType(
 # following screen design
 Voice_form_class = uic.loadUiType(
     "/home/nvidia/paho_mqtt_py_demo/ui/Voice.ui")[0]
-
-Map_form_class = uic.loadUiType(
-    "/home/nvidia/paho_mqtt_py_demo/ui/Mapcreator.ui")[0]
 
 # 화면을 띄우는데 사용되는 Class 선언
 class WindowClass(QMainWindow, Main_form_class):
@@ -191,56 +187,6 @@ class WindowClass(QMainWindow, Main_form_class):
         self.v.show()
         self.hide()
 
-# class Map_WindowClass(QMainWindow, Map_form_class):
-#     def __init__(self):
-#         super().__init__()
-
-#         self.setupUi(self)
-
-#         self.frame = rviz.VisualizationFrame()
-#         self.frame.setSplashPath( "" )
-#         self.frame.initialize()
-#         reader = rviz.YamlConfigReader()
-#         config = rviz.Config()
-#         reader.readFile( config, "/home/nvidia/catkin_ws/src/RPLidar_Hector_SLAM/hector_slam/hector_slam_launch/rviz_cfg/mapping_demo.rviz" )
-#         self.frame.load( config )
-
-#         self.setWindowTitle( config.mapGetChild( "Title" ).getValue() )
-#         self.frame.setMenuBar( None )
-#         self.frame.setStatusBar( None )
-#         self.frame.setHideButtonVisibility( False )
-#         self.manager = self.frame.getManager()
-#         self.grid_display = self.manager.getRootDisplayGroup().getDisplayAt( 0 )
-
-#         layout = QGridLayout()
-#         layout.addWidget(self.frame)
-#         self.setLayout(layout)
-
-#         self.Map_Create_Cancle_Btn.clicked.connect(
-#             self.Map_Create_Cancle_Btn_Function
-#         )
-#         self.Map_Create_Start_Btn.clicked.connect(
-#             self.Map_Create_start_Btn_Function
-#         )
-
-#     def Map_Create_Cancle_Btn_Function(self):
-
-#         self.M_window()
-#         client = connect_mqtt()
-#         Mapping_Cancle(client)
-        
-#     def Map_Create_start_Btn_Function(self):
-        
-#         client = connect_mqtt()
-#         publish_Mapping(client)
-
-#     def M_window(self):
-
-#         self.m = WindowClass()
-#         self.m.show()
-#         self.hide()
-
-
 class Nav_WindowClass(QMainWindow, Nav_form_class):
     def __init__(self):
         super().__init__()
@@ -249,33 +195,51 @@ class Nav_WindowClass(QMainWindow, Nav_form_class):
             self.Nav_Window_Cancle_Btn_Function)
         self.Nav_Action_Btn.clicked.connect(
             self.Nav_Action_Btn_Function)
+        self.Map_Save_Btn.clicked.connect(
+            self.Map_Save_Btn_Function)
+        self.Command_Start_Btn.clicked.connect(
+            self.Command_Start_Btn_Function)
+
         self.Nav_Action_Btn.setStyleSheet(
             "background-image : url(/home/nvidia/paho_mqtt_py_demo/img/map.png);"
             "background-position : center;")
 
     def Nav_Window_Cancle_Btn_Function(self):
 
-        self.Map_window()
+        self.M_window()
         client = connect_mqtt()
         Nav_Cancle(client)
         
     def Nav_Action_Btn_Function(self):
         
-        #self.M_window()
+        # print("Map_Create_Btn Clicked (Map_Create_Btn Clicked!)")
+        # self.Map_window()
         client = connect_mqtt()
         publish_Nav(client)
 
-    # def Map_window(self):
-    #     self.n = Map_WindowClass()
-    #     self.n.show()
-    #     self.hide()
+    def Map_Save_Btn_Function(self):
+        
+        # print("Map_Create_Btn Clicked (Map_Create_Btn Clicked!)")
+        # self.Map_window()
+        client = connect_mqtt()
+        publish_Map(client)
 
-    # def M_window(self):
+    def Command_Start_Btn_Function(self):
+        
+        # print("Map_Create_Btn Clicked (Map_Create_Btn Clicked!)")
+        self.Cmd_window()
+        # client = connect_mqtt()
+        # publish_Command_Start(client)
 
-    #     self.m = WindowClass()
-    #     self.m.show()
-    #     self.hide()
+    def M_window(self):
 
+        self.m = WindowClass()
+        self.m.show()
+        self.hide()
+
+    def Cmd_window(self):
+        self.c = cmd.Keyboard_WindowClass()
+        self.c.show()
 
 class F_WindowClass(QMainWindow, F_form_class):
     def __init__(self):

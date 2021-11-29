@@ -189,7 +189,7 @@ class deepsortClass(mqttClass):
                 else:
                     # 타겟과의 거리가 멀리있을때 전진
                     if self.distance_val > 80.0:
-                        buff_a = b'h'
+                        buff_a = b'i'
 
                     # 타겟과의 거리가 가까이있을때 후진
                     # elif distance_val < 0.5:
