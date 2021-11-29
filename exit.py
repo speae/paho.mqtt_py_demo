@@ -71,7 +71,7 @@ def connect_mqtt() -> mqtt_client:
             print(f"Quit received `{str_msg}` from `{msg.topic}` topic")
             
             serialPort = serial.Serial(
-                port="/dev/ttyUSB0",
+                port="/dev/ttyUSB1",
                 #port="/dev/ttyUSB0",
                 baudrate=115200,
                 bytesize=serial.EIGHTBITS,

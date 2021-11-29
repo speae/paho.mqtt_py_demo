@@ -64,7 +64,7 @@ void *t_function(void *data)
             // else
             Buff[0] = buff[0];
             write( handle, Buff, 1 );
-            printf("%s", buff);
+            printf("%s", Buff);
             memset(buff, 0x00, BUFF_SIZE);
         }
     }
@@ -136,12 +136,14 @@ int main( int argc, char **argv )
 
 
     // 화일을 연다.
-    handle = open( "/dev/ttyUSB0", O_RDWR | O_NOCTTY );
+    handle = open( "/dev/ttyUSB1", O_RDWR | O_NOCTTY );
+    //handle = open( "/dev/ttyUSB0", O_RDWR | O_NOCTTY );
     //handle = open( "/dev/ttyTHS2", O_RDWR | O_NOCTTY );
     if( handle < 0 ) 
     {
         //화일 열기 실패
-        printf( "Serial Open Fail [/dev/ttyUSB0]\r\n "  );
+        printf( "Serial Open Fail [/dev/ttyUSB1]\r\n "  );
+        //printf( "Serial Open Fail [/dev/ttyUSB0]\r\n "  );
         //printf( "Serial Open Fail [/dev/ttyTHS2]\r\n "  );
         exit(0);
     }
@@ -177,6 +179,7 @@ int main( int argc, char **argv )
                //Buff[0] = 'i';
                Buff[0] = 'i';
                write( handle, Buff, 1 );
+               printf("%c send\n", Buff[0]);
                break; 
 
             case 'j':
@@ -189,14 +192,14 @@ int main( int argc, char **argv )
             case 'A':
                printf("A\n");
                Buff[0] = 'A';
-               write( fd_to_yolo, Buff, 1 );
+               write( handle, Buff, 1 );
                printf("%c send\n", Buff[0]);
                break;
 
 	        case 'B':
                printf("B\n");
                Buff[0] = 'B';
-               write( fd_to_yolo, Buff, 1 );
+               write( handle, Buff, 1 );
                printf("%c send\n", Buff[0]);
                break;
 
@@ -217,14 +220,14 @@ int main( int argc, char **argv )
             case 'E':
                printf("E\n");
                Buff[0] = 'E';
-               write( fd_to_yolo, Buff, 1 );
+               write( handle, Buff, 1 );
                printf("%c send\n", Buff[0]);
                break;
 
 	        case 'F':
                printf("F\n");
                Buff[0] = 'F';
-               write( fd_to_yolo, Buff, 1 );
+               write( handle, Buff, 1 );
                printf("%c send\n", Buff[0]);
                break;
 
