@@ -136,14 +136,14 @@ int main( int argc, char **argv )
 
 
     // 화일을 연다.
-    handle = open( "/dev/ttyUSB1", O_RDWR | O_NOCTTY );
-    //handle = open( "/dev/ttyUSB0", O_RDWR | O_NOCTTY );
+    //handle = open( "/dev/ttyUSB1", O_RDWR | O_NOCTTY );
+    handle = open( "/dev/ttyUSB0", O_RDWR | O_NOCTTY );
     //handle = open( "/dev/ttyTHS2", O_RDWR | O_NOCTTY );
     if( handle < 0 ) 
     {
         //화일 열기 실패
-        printf( "Serial Open Fail [/dev/ttyUSB1]\r\n "  );
-        //printf( "Serial Open Fail [/dev/ttyUSB0]\r\n "  );
+        //printf( "Serial Open Fail [/dev/ttyUSB1]\r\n "  );
+        printf( "Serial Open Fail [/dev/ttyUSB0]\r\n "  );
         //printf( "Serial Open Fail [/dev/ttyTHS2]\r\n "  );
         exit(0);
     }
@@ -187,6 +187,7 @@ int main( int argc, char **argv )
                //Buff[0] = 'i';
                Buff[0] = 'j';
                write( handle, Buff, 1 );
+               printf("%c send\n", Buff[0]);
                break;  
 
             case 'A':
@@ -208,6 +209,7 @@ int main( int argc, char **argv )
                //Buff[0] = 'I';
                Buff[0] = 'C';
                write( handle, Buff, 1 );
+               printf("%c send\n", Buff[0]);
                break;  
 
             case 'D':
@@ -215,6 +217,7 @@ int main( int argc, char **argv )
                //Buff[0] = 'D';
                Buff[0] = 'D';
                write( handle, Buff, 1 );
+               printf("%c send\n", Buff[0]);
                break;  
 
             case 'E':
@@ -236,6 +239,7 @@ int main( int argc, char **argv )
                //Buff[0] = 'I';
                Buff[0] = 'G';
                write( handle, Buff, 1 );
+               printf("%c send\n", Buff[0]);
                break;  
 
             case 'H':
@@ -243,6 +247,7 @@ int main( int argc, char **argv )
                //Buff[0] = 'D';
                Buff[0] = 'H';
                write( handle, Buff, 1 );
+               printf("%c send\n", Buff[0]);
                break;
 
             case 'q':
@@ -250,10 +255,11 @@ int main( int argc, char **argv )
                tcsetattr( handle, TCSANOW, &oldtio ); // 이전 상태로 되돌린다. 
                close( handle );   // 화일을 닫는다.               
                exit(0);
+               printf("%c send\n", Buff[0]);
                break;
 
             default :
-               printf("Wrong key ..... try again\n");
+               printf("%d :: Wrong key ..... try again\n", key);
                break;
         }
     }

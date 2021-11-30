@@ -81,7 +81,7 @@ def fifoThread ():
             else:
                 # 타겟과의 거리가 멀리있을때 전진
                 if distance_val > 80.0:
-                    buff_a = 'h'
+                    buff_a = 'i'
                 # 타겟과의 거리가 가까이있을때 후진
                 # elif distance_val < 0.5:
                 #     buff_a = 'd'

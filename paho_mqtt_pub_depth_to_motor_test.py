@@ -127,7 +127,7 @@ class deepsortClass(mqttClass):
                         b'F' : '◀◀ :: turn left',
                         b'G' : '◀◀◀ :: turn left',
                         b'H' : '◀◀◀◀ :: turn left',
-                        b'h' : '▲',
+                        b'i' : '▲',
                         b'k' : '▼',
                         b'j' : '■ STOP ■'}
 

@@ -13,6 +13,12 @@ password = 'public'
 
 
 def connect_mqtt():
+
+    def on_log(client, obj, level, string):
+        print(f"log : {string}")
+        if string == "Received PINGRESP":
+            client.reconnect()
+            
     def on_connect(client, userdata, flags, rc):
         if rc == 0:
             print("Connected to MQTT Broker!")
@@ -21,6 +27,7 @@ def connect_mqtt():
 
     client = mqtt_client.Client(client_id)
     client.username_pw_set(username, password)
+    client.on_log = on_log
     client.on_connect = on_connect
     client.connect(broker, port)
     return client

@@ -32,8 +32,8 @@ class MotorCon():
                         b'j' : 'stop'}
         
         self.serialPort = serial.Serial(
-            #port="/dev/ttyUSB0",
-            port="/dev/ttyUSB1",
+            port="/dev/ttyUSB0",
+            #port="/dev/ttyUSB1",
             baudrate=115200,
             bytesize=serial.EIGHTBITS,
             parity=serial.PARITY_NONE,
@@ -76,9 +76,10 @@ class mqttClass(MotorCon):
         self.topicKeyboard = "python/keyboardControll"
 
     def connect_mqtt(self) -> mqtt:
+        
         def on_log(server, obj, level, string):
             print(f"log : {string}")
-            if string == "Sending PINGREQ":
+            if string == "Received PINGRESP":
                 server.reconnect()
 
         def on_message(server, userdata, msg):
@@ -87,7 +88,7 @@ class mqttClass(MotorCon):
             try:
                 if stopCommand[0] == self.topicStop and stopCommand[1] == b'j':
                     i = 0
-                    while i < 10:
+                    while i < 20:
                         self.MC.txThread(b'j')
                         self.MC.rxThread()
                         i += 1

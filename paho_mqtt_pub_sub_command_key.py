@@ -10,6 +10,7 @@ client_id = f'python-mqtt-{mainScreen.random.randint(0, 1000)}'
 username = 'emqx'
 password = 'public'
 
+flag = 0
 # Command_form_class = mainScreen.uic.loadUiType(
 #     "/home/nvidia/paho_mqtt_py_demo/ui/command.ui")[0]
 
@@ -33,14 +34,22 @@ class Keyboard_WindowClass(mainScreen.QMainWindow):
         myWidget.setLayout(layout)
         
     def connect_mqtt(self):
+
+        def on_log(client, obj, level, string):
+            print(f"log : {string}")
+            if string == "Received PINGRESP":
+                client.reconnect()
+        
         def on_connect(client, userdata, flags, rc):
-            if rc == 0:
+            global flag
+            if rc == 0:                                                                                      
                 print("Connected to MQTT Broker!")
             else:
                 print("Failed to connect, return code %d\n", rc)
 
         client = mainScreen.mqtt_client.Client(client_id)
         client.username_pw_set(username, password)
+        client.on_log = on_log
         client.on_connect = on_connect
         client.connect(broker, port)
         return client
@@ -67,19 +76,19 @@ class Keyboard_WindowClass(mainScreen.QMainWindow):
             
         elif e.text() == chr(69) or e.text() == chr(101): 
             client.publish(topicKeyboard, b'E')
-            self.resultLabel.setText("turn left:: ◀")
+            self.resultLabel.setText("◀ ::turn left")
             
         elif e.text() == chr(70) or e.text() == chr(102): 
             client.publish(topicKeyboard, b'F')
-            self.resultLabel.setText("turn left:: ◀◀")
+            self.resultLabel.setText("◀◀ ::turn left")
             
         elif e.text() == chr(71) or e.text() == chr(103): 
             client.publish(topicKeyboard, b'G')
-            self.resultLabel.setText("turn left:: ◀◀◀")
+            self.resultLabel.setText("◀◀◀ ::turn left")
             
         elif e.text() == chr(72) or e.text() == chr(104): 
             client.publish(topicKeyboard, b'H')
-            self.resultLabel.setText("turn left:: ◀◀◀◀")
+            self.resultLabel.setText("◀◀◀◀ ::turn left")
             
         elif e.text() == chr(105): 
             client.publish(topicKeyboard, b'i')
@@ -94,7 +103,7 @@ class Keyboard_WindowClass(mainScreen.QMainWindow):
             self.resultLabel.setText("■ STOP ■'")
             
         else:
-            print("retry.")    
+            print(f"{e.text()} :: retry.")  
 
 if __name__ == '__main__': 
     app = mainScreen.QApplication(mainScreen.sys.argv)

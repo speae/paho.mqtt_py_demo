@@ -10,11 +10,12 @@ from PyQt5 import uic
 from PyQt5.QtGui import QPixmap, QFont, QFontDatabase
 from PyQt5.QtCore import Qt
 
-import paho_mqtt_pub_sub_command_key
+import paho_mqtt_pub_sub_command_key as cmd
+import cv2
+#from skimage.io import imread
 
 ###############################################################################
 # MQTT Setting
-cmd = paho_mqtt_pub_sub_command_key
 
 broker = 'broker.emqx.io'
 port = 1883
@@ -22,6 +23,7 @@ topic = "python/mqtt"
 topicOldVersion = "python/oldversion"
 topic_cancle = "python/cancle"
 topicKeyboard = "python/keyboardControll"
+mappingStart = "python/mappingStart"
 
 # generate client ID with pub prefix randomly
 client_id = f'python-mqtt-{random.randint(0, 1000)}'
@@ -29,14 +31,23 @@ username = 'emqx'
 password = 'public'
 
 def connect_mqtt():
+
+    def on_log(client, obj, level, string):
+        print(f"log : {string}")
+        if string == "Received PINGRESP":
+            client.reconnect()
+            
     def on_connect(client, userdata, flags, rc):
         if rc == 0:
             print("Connected to MQTT Broker!")
+            client.subscribe(topic)
+            
         else:
             print("Failed to connect, return code %d\n", rc)
 
     client = mqtt_client.Client(client_id)
     client.username_pw_set(username, password)
+    client.on_log = on_log
     client.on_connect = on_connect
     client.connect(broker, port)
     return client
@@ -90,17 +101,31 @@ def publish_Nav(client):
     else:
         print(f"Failed to send message to topic {topic}")
 
-def publish_Map(client):
+def publish_Mapping_Start(client):
     time.sleep(1)
     
-    msg = "map_save_on"
-    result = client.publish(topic, msg, 0)
+    msg = "mapping_start_on"
+    #rospy.init_node('talker', anonymous=True)
+    result = client.publish(mappingStart, msg, 0)
     # result: [0, 1]
     status = result[0]
     if status == 0:
         print(f"Send `{msg}` to topic `{topic}`")
     else:
         print(f"Failed to send message to topic {topic}")
+
+def publish_Map(client):
+    os.system("rosrun map_server map_saver -f ~/map")
+    # time.sleep(1)
+    
+    # msg = "map_save_on"
+    # result = client.publish(topic, msg, 0)
+    # # result: [0, 1]
+    # status = result[0]
+    # if status == 0:
+    #     print(f"Send `{msg}` to topic `{topic}`")
+    # else:
+    #     print(f"Failed to send message to topic {topic}")
 
 def publish_Command_Start(client):
     time.sleep(1)
@@ -193,10 +218,14 @@ class Nav_WindowClass(QMainWindow, Nav_form_class):
             self.Nav_Window_Cancle_Btn_Function)
         self.Nav_Action_Btn.clicked.connect(
             self.Nav_Action_Btn_Function)
+        self.Mapping_Start_Btn.clicked.connect(
+            self.Mapping_Start_Btn_Function)
         self.Map_Save_Btn.clicked.connect(
             self.Map_Save_Btn_Function)
         self.Command_Start_Btn.clicked.connect(
             self.Command_Start_Btn_Function)
+        self.Show_Map_Btn.clicked.connect(
+            self.Show_Map_Btn_Function)
 
         self.Nav_Action_Btn.setStyleSheet(
             "background-image : url(/home/nvidia/paho_mqtt_py_demo/img/map.png);"
@@ -215,12 +244,23 @@ class Nav_WindowClass(QMainWindow, Nav_form_class):
         client = connect_mqtt()
         publish_Nav(client)
 
+    def Mapping_Start_Btn_Function(self):
+        
+        # print("Map_Create_Btn Clicked (Map_Create_Btn Clicked!)")
+        # self.Map_window()
+        client = connect_mqtt()
+        publish_Mapping_Start(client)
+
     def Map_Save_Btn_Function(self):
         
         # print("Map_Create_Btn Clicked (Map_Create_Btn Clicked!)")
         # self.Map_window()
         client = connect_mqtt()
         publish_Map(client)
+
+    def Show_Map_Btn_Function(self):
+        print("show me the map!!!")
+        os.system("xdg-open ~/map.pgm")
 
     def Command_Start_Btn_Function(self):
         

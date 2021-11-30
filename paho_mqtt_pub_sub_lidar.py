@@ -12,12 +12,19 @@ broker = 'broker.emqx.io'
 port = 1883
 lidarStop = "python/lidarStop"
 
+flag = 0
+
 uuid = rlutil.get_or_generate_uuid(None, False)
+# lidarStartArgs = ["rplidar_ros", "rplidar.launch"]
+# lidarMappingArgs = ["hector_slam_launch", "tutorial.launch"]
+# roslaunchLidarStart = rlutil.resolve_launch_arguments(lidarStartArgs)[0]
+# roslaunchLidarSlam = rlutil.resolve_launch_arguments(lidarMappingArgs)[0]
+# roslaunchLidarFiles = [roslaunchLidarStart, roslaunchLidarSlam]
+# lidarParent = parent.ROSLaunchParent(uuid, roslaunchLidarFiles) 
+
 lidarStartArgs = ["rplidar_ros", "rplidar.launch"]
-lidarMappingArgs = ["hector_slam_launch", "tutorial.launch"]
 roslaunchLidarStart = rlutil.resolve_launch_arguments(lidarStartArgs)[0]
-roslaunchLidarSlam = rlutil.resolve_launch_arguments(lidarMappingArgs)[0]
-roslaunchLidarFiles = [roslaunchLidarStart, roslaunchLidarSlam]
+roslaunchLidarFiles = [roslaunchLidarStart]
 lidarParent = parent.ROSLaunchParent(uuid, roslaunchLidarFiles) 
 
 def connect_mqtt() -> mqtt_client:
