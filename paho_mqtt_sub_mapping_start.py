@@ -4,7 +4,7 @@ import random
 from roslaunch import rlutil, parent
 from paho.mqtt import client as mqtt_client
 
-import rospy
+from rospy import core
 from std_msgs.msg import String
 
 client_id = f'python-mqtt-{random.randint(0, 100)}'
@@ -48,10 +48,10 @@ def connect_mqtt() -> mqtt_client:
             print(f"Received `{str_msg}` from `{msg.topic}` topic")
             lidarParent.start()
 
-        elif str_msg == "nav_off":
-            print(f"Received `{str_msg}` from `{msg.topic}` topic")
-            
+        if str_msg == "nav_off":
+            print(f"Received `{str_msg}` from `{msg.topic}` topic")        
             lidarParent.shutdown()
+            
             client.disconnect(reasoncode=0)
             print("navigation OFF...")
             client.reconnect()

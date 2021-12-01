@@ -7,7 +7,7 @@ class mqtt_driver():
 
     def __init__(self):   
         self.broker = 'broker.emqx.io'
-        # broker2 = "mqtt.eclipseprojects.io"
+        self.broker2 = "mqtt.eclipseprojects.io"
         self.port = 1883
         self.topic = "python/mqtt"
 
@@ -18,10 +18,10 @@ class mqtt_driver():
 
     def connect_mqtt(self) -> mqtt_client:
         
-        def on_log(client, obj, level, string):
-            print(f"log : {string}")
-            if string == "Received PINGRESP":
-                client.reconnect()
+        # def on_log(client, obj, level, string):
+        #     print(f"log : {string}")
+        #     if string == "Received PINGRESP":
+        #         client.reconnect(reasoncode=0)
 
         def on_message(client, userdata, msg):
             str_msg = str(msg.payload.decode("utf-8"))
@@ -64,11 +64,12 @@ class mqtt_driver():
 
         client = mqtt_client.Client(self.client_id)
         client.username_pw_set(self.username, self.password)
-        client.on_log = on_log
+        #client.on_log = on_log
         client.on_message = on_message
         client.on_subscribe = on_subscribe
         client.on_connect = on_connect
         client.connect(self.broker, self.port)
+        #client.connect(self.broker2, self.port)
         return client
 
     def run(self):

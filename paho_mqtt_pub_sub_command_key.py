@@ -100,8 +100,28 @@ class Keyboard_WindowClass(mainScreen.QMainWindow):
             
         elif e.text() == chr(106): 
             client.publish(topicKeyboard, b'j')
-            self.resultLabel.setText("■ STOP ■'")
-            
+            self.resultLabel.setText("■ STOP ■")
+
+        elif e.text() == mainScreen.Qt.Key_Up: 
+            client.publish(topicKeyboard, b'i')
+            self.resultLabel.setText("▲")
+
+        elif e.text() == mainScreen.Qt.Key_Down: 
+            client.publish(topicKeyboard, b'k')
+            self.resultLabel.setText("▼")
+
+        elif e.text() == mainScreen.Qt.Key_Left: 
+            client.publish(topicKeyboard, b'E')
+            self.resultLabel.setText("◀")
+
+        elif e.text() == mainScreen.Qt.Key_Right: 
+            client.publish(topicKeyboard, b'D')
+            self.resultLabel.setText("▶")    
+
+        elif e.text() == mainScreen.Qt.Key_Escape: 
+            client.publish(topicKeyboard, b'j')
+            self.resultLabel.setText("■ STOP ■")
+
         else:
             print(f"{e.text()} :: retry.")  
 

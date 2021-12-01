@@ -18,6 +18,7 @@ import cv2
 # MQTT Setting
 
 broker = 'broker.emqx.io'
+broker2 = "mqtt.eclipseprojects.io"
 port = 1883
 topic = "python/mqtt"
 topicOldVersion = "python/oldversion"
@@ -50,6 +51,7 @@ def connect_mqtt():
     client.on_log = on_log
     client.on_connect = on_connect
     client.connect(broker, port)
+    #client.connect(broker2, port)
     return client
 
 def publish_Following(client):
@@ -101,18 +103,18 @@ def publish_Nav(client):
     else:
         print(f"Failed to send message to topic {topic}")
 
-def publish_Mapping_Start(client):
-    time.sleep(1)
+# def publish_Mapping_Start(client):
+#     time.sleep(1)
     
-    msg = "mapping_start_on"
-    #rospy.init_node('talker', anonymous=True)
-    result = client.publish(mappingStart, msg, 0)
-    # result: [0, 1]
-    status = result[0]
-    if status == 0:
-        print(f"Send `{msg}` to topic `{topic}`")
-    else:
-        print(f"Failed to send message to topic {topic}")
+#     msg = "mapping_start_on"
+#     #rospy.init_node('talker', anonymous=True)
+#     result = client.publish(mappingStart, msg, 0)
+#     # result: [0, 1]
+#     status = result[0]
+#     if status == 0:
+#         print(f"Send `{msg}` to topic `{topic}`")
+#     else:
+#         print(f"Failed to send message to topic {topic}")
 
 def publish_Map(client):
     os.system("rosrun map_server map_saver -f ~/map")
@@ -177,11 +179,13 @@ class WindowClass(QMainWindow, Main_form_class):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
+        self.showMaximized()
         self.Nav_Btn.clicked.connect(self.Nav_Btn_Function)
         self.F_Btn.clicked.connect(self.F_Btn_Function)
         # setting image to the button
         self.Voice_Btn.clicked.connect(self.Voice_Btn_Function)
         # setting image to the button
+        #self.showMaximized()
 
     def Nav_Btn_Function(self):
         print("Nav_Btn Clicked (Nav_Btn Clicked!)")
@@ -214,12 +218,13 @@ class Nav_WindowClass(QMainWindow, Nav_form_class):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
+        self.showMaximized()
         self.Nav_Window_Cancle_Btn.clicked.connect(
             self.Nav_Window_Cancle_Btn_Function)
         self.Nav_Action_Btn.clicked.connect(
             self.Nav_Action_Btn_Function)
-        self.Mapping_Start_Btn.clicked.connect(
-            self.Mapping_Start_Btn_Function)
+        # self.Mapping_Start_Btn.clicked.connect(
+        #     self.Mapping_Start_Btn_Function)
         self.Map_Save_Btn.clicked.connect(
             self.Map_Save_Btn_Function)
         self.Command_Start_Btn.clicked.connect(
@@ -244,12 +249,12 @@ class Nav_WindowClass(QMainWindow, Nav_form_class):
         client = connect_mqtt()
         publish_Nav(client)
 
-    def Mapping_Start_Btn_Function(self):
+    # def Mapping_Start_Btn_Function(self):
         
-        # print("Map_Create_Btn Clicked (Map_Create_Btn Clicked!)")
-        # self.Map_window()
-        client = connect_mqtt()
-        publish_Mapping_Start(client)
+    #     # print("Map_Create_Btn Clicked (Map_Create_Btn Clicked!)")
+    #     # self.Map_window()
+    #     client = connect_mqtt()
+    #     publish_Mapping_Start(client)
 
     def Map_Save_Btn_Function(self):
         
@@ -283,6 +288,7 @@ class F_WindowClass(QMainWindow, F_form_class):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
+        self.showMaximized()
         self.Following_Cancle_Btn.clicked.connect(
             self.Following_Cancle_Btn_Function)
         self.Following_Action_Btn.clicked.connect(
@@ -330,6 +336,7 @@ class Voice_WindowClass(QMainWindow, Voice_form_class):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
+        self.showMaximized()
         self.Voice_Cancle_Btn.clicked.connect(self.Voice_Cancle_Btn_Function)
         self.Voice_Action_Btn.clicked.connect(self.Voice_Action_Btn_Function)
         self.Voice_Action_Btn.setStyleSheet(

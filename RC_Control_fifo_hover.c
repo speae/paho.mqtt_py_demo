@@ -86,7 +86,7 @@ int main( int argc, char **argv )
     char    Buff[256];
     int     RxCount;
     int     loop;
-    int     ending;
+    int     bluetooth_flag;
     
     int key;
     
@@ -168,12 +168,22 @@ int main( int argc, char **argv )
     write( handle, TitleMessage, strlen( TitleMessage ) );
     
     // 1 문자씩 받아서 되돌린다. 
-    ending = 0;
-
+    bluetooth_flag = 0;
+    
     while((key=main_menu()) != 0)
     {
+        if (key == 27)
+        {
+            bluetooth_flag += 1;
+        }
+        else if (key == 91)
+        {
+            bluetooth_flag += 1;
+        }
+        
         switch(key)
         {
+        
             case 'i':
                printf("i\n");               
                //Buff[0] = 'i';
@@ -183,6 +193,7 @@ int main( int argc, char **argv )
                break; 
 
             case 'j':
+            case 10:
                printf("j\n");               
                //Buff[0] = 'i';
                Buff[0] = 'j';
@@ -190,37 +201,101 @@ int main( int argc, char **argv )
                printf("%c send\n", Buff[0]);
                break;  
 
-            case 'A':
-               printf("A\n");
-               Buff[0] = 'A';
+            case 'k':
+               printf("k\n");               
+               //Buff[0] = 'i';
+               Buff[0] = 'k';
                write( handle, Buff, 1 );
                printf("%c send\n", Buff[0]);
-               break;
+               break; 
+
+            case 'A':
+            case 97:
+                if (bluetooth_flag == 2)
+                {
+                    printf("forward.\n");
+                    Buff[0] = 'i';
+                    write( handle, Buff, 1 );
+                    printf("%c send\n", Buff[0]);
+                    bluetooth_flag = 0;
+                    break; 
+                }
+                else
+                {
+                    printf("A\n");
+                    Buff[0] = 'A';
+                    write( handle, Buff, 1 );
+                    printf("%c send\n", Buff[0]);
+                    bluetooth_flag = 0;
+                    break;
+                }
 
 	        case 'B':
-               printf("B\n");
-               Buff[0] = 'B';
-               write( handle, Buff, 1 );
-               printf("%c send\n", Buff[0]);
-               break;
-
+            case 98:
+                if (bluetooth_flag == 2)
+                {
+                    printf("backward.\n");
+                    Buff[0] = 'k';
+                    write( handle, Buff, 1 );
+                    printf("%c send\n", Buff[0]);
+                    bluetooth_flag = 0;
+                    break; 
+                }
+                else
+                {
+                    printf("B\n");
+                    Buff[0] = 'B';
+                    write( handle, Buff, 1 );
+                    printf("%c send\n", Buff[0]);
+                    bluetooth_flag = 0;
+                    break;
+                }
+                
             case 'C':
-               printf("C\n");               
-               //Buff[0] = 'I';
-               Buff[0] = 'C';
-               write( handle, Buff, 1 );
-               printf("%c send\n", Buff[0]);
-               break;  
-
+            case 99:
+                if (bluetooth_flag == 2)
+                {
+                    printf("turn right:: ▶\n");
+                    Buff[0] = 'D';
+                    write( handle, Buff, 1 );
+                    printf("%c send\n", Buff[0]);
+                    bluetooth_flag = 0;
+                    break; 
+                }
+                else
+                {
+                    printf("C\n");               
+                    //Buff[0] = 'I';
+                    Buff[0] = 'C';
+                    write( handle, Buff, 1 );
+                    printf("%c send\n", Buff[0]);
+                    bluetooth_flag = 0;
+                    break;  
+                }
+                
             case 'D':
-               printf("D\n");
-               //Buff[0] = 'D';
-               Buff[0] = 'D';
-               write( handle, Buff, 1 );
-               printf("%c send\n", Buff[0]);
-               break;  
-
+            case 100:
+                if (bluetooth_flag == 2)
+                {
+                    printf("◀ ::turn left\n");
+                    Buff[0] = 'E';
+                    write( handle, Buff, 1 );
+                    printf("%c send\n", Buff[0]);
+                    bluetooth_flag = 0;
+                    break; 
+                }
+                else
+                {
+                    printf("turn right:: ▶\n");
+                    Buff[0] = 'D';
+                    write( handle, Buff, 1 );
+                    printf("%c send\n", Buff[0]);
+                    bluetooth_flag = 0;
+                    break;
+                }
+                
             case 'E':
+            case 101:
                printf("E\n");
                Buff[0] = 'E';
                write( handle, Buff, 1 );
@@ -228,6 +303,7 @@ int main( int argc, char **argv )
                break;
 
 	        case 'F':
+            case 102:
                printf("F\n");
                Buff[0] = 'F';
                write( handle, Buff, 1 );
@@ -235,6 +311,7 @@ int main( int argc, char **argv )
                break;
 
             case 'G':
+            case 103:
                printf("G\n");               
                //Buff[0] = 'I';
                Buff[0] = 'G';
@@ -243,6 +320,7 @@ int main( int argc, char **argv )
                break;  
 
             case 'H':
+            case 104:
                printf("H\n");
                //Buff[0] = 'D';
                Buff[0] = 'H';
